@@ -1,0 +1,60 @@
+﻿@model ScientificJournal.Domain.DTO.PaperDTO
+@{
+	ViewData["Title"] = "Create";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h4>Research paper</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Paper.Title" class="control-label"></label>
+				<input asp-for="Paper.Title" class="form-control" />
+				<span asp-validation-for="Paper.Title" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Paper.AreaOfResearch" class="control-label"></label>
+				<input asp-for="Paper.AreaOfResearch" class="form-control" />
+				<span asp-validation-for="Paper.AreaOfResearch" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Paper.Abstract" class="control-label"></label>
+				<textarea asp-for="Paper.Abstract" class="form-control" style="height: 50px"></textarea>
+				<span asp-validation-for="Paper.Abstract" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Keywords" class="control-label"></label>
+				<input asp-for="Keywords" class="form-control" />
+				<span asp-validation-for="Keywords" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="AuthorFirst" class="control-label"></label>
+				<input asp-for="AuthorFirst" class="form-control" />
+				<span asp-validation-for="AuthorFirst" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="AuthorSecond" class="control-label"></label>
+				<input asp-for="AuthorSecond" class="form-control" />
+				<span asp-validation-for="AuthorSecond" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="AuthorThird" class="control-label"></label>
+				<input asp-for="AuthorThird" class="form-control" />
+				<span asp-validation-for="AuthorThird" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

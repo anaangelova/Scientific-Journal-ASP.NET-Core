@@ -1,0 +1,60 @@
+﻿@model ScientificJournal.Domain.DTO.PaperDetailsDTO
+@{
+	ViewData["Title"] = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+	<h4>Research paper</h4>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Paper.Title)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Paper.Title)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Paper.AreaOfResearch)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Paper.AreaOfResearch)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Paper.Abstract)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Paper.Abstract)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Keywords)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Keywords)
+		</dd>
+
+		@for (int i = 0; i < Model.Authors.Count; i++)
+		{
+			var item = Model.Authors[i];
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.Authors[i].Email)
+			</dt>
+			<dd class="col-sm-10">
+				@Html.DisplayFor(model => model.Authors[i].Email)
+			</dd>
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.Authors[i].Biography)
+			</dt>
+			<dd class="col-sm-10">
+				@Html.DisplayFor(model => model.Authors[i].Biography)
+			</dd>
+		}
+
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model.Paper.Id">Edit</a> |
+	<a asp-action="Index">Back to List</a>
+</div>
