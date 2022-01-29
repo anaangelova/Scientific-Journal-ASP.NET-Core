@@ -1,4 +1,5 @@
-﻿using ScientificJournal.Domain.DomainModels;
+﻿using Microsoft.AspNetCore.Http;
+using ScientificJournal.Domain.DomainModels;
 using ScientificJournal.Domain.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,7 @@ namespace ScientificJournal.Domain.DTO
         public Paper Paper { get; set; }
         public String Keywords { get; set; }
         public List<ScienceUser> Authors { get; set; }
+
+        public string DocumentName { get; set; }
     }
 }

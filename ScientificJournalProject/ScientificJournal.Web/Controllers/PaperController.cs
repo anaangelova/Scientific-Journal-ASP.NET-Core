@@ -5,6 +5,7 @@ using ScientificJournal.Domain.DTO;
 using ScientificJournal.Service.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,11 +35,12 @@ namespace ScientificJournal.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind] PaperDTO paperDTO)
+        public IActionResult Create([Bind] PaperDTO paperDTO, IFormFile file)
         {
             if (ModelState.IsValid)
             {
-                paperService.CreateNewPaper(paperDTO);
+                
+                paperService.CreateNewPaper(paperDTO,file);
                 return RedirectToAction("Index");
 
 
@@ -60,6 +62,13 @@ namespace ScientificJournal.Web.Controllers
             }
 
             return View(paper);
+        }
+
+        public IActionResult GetPdfDocument(string name)
+        {
+            string pathToUpload = $"{Directory.GetCurrentDirectory()}\\files\\{name}";
+            var stream = new FileStream(pathToUpload, FileMode.Open);
+            return File(stream, "application/pdf", name);
         }
     }
 }

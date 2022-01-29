@@ -1,10 +1,12 @@
-﻿using ScientificJournal.Domain.DomainModels;
+﻿using Microsoft.AspNetCore.Http;
+using ScientificJournal.Domain.DomainModels;
 using ScientificJournal.Domain.DTO;
 using ScientificJournal.Domain.Identity;
 using ScientificJournal.Repository.Interface;
 using ScientificJournal.Service.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -16,17 +18,36 @@ namespace ScientificJournal.Service.Implementation
         private readonly IPapersKeywordsRepository papersKeywordsRepository;
         private readonly IUserRepository userRepository;
         private readonly IPapersUsersRepository papersUsersRepository;
+        private readonly IPaperDocumentRepository paperDocumentRepository;
 
-        public PaperService(IPaperRepository paperRepository, IPapersKeywordsRepository papersKeywordsRepository, IUserRepository userRepository, IPapersUsersRepository papersUsersRepository)
+        public PaperService(IPaperRepository paperRepository, IPapersKeywordsRepository papersKeywordsRepository, IUserRepository userRepository, IPapersUsersRepository papersUsersRepository, IPaperDocumentRepository paperDocumentRepository)
         {
             this.paperRepository = paperRepository;
             this.papersKeywordsRepository = papersKeywordsRepository;
             this.userRepository = userRepository;
             this.papersUsersRepository = papersUsersRepository;
+            this.paperDocumentRepository = paperDocumentRepository;
         }
 
-        public void CreateNewPaper(PaperDTO p)
+        public void CreateNewPaper(PaperDTO p,IFormFile file)
         {
+            //dopolnitelno treba da se zachuva i prateniot pdf dokument!!!
+            string pathToUpload = $"{Directory.GetCurrentDirectory()}\\files\\{file.FileName}";
+
+            using (FileStream fileStream = System.IO.File.Create(pathToUpload))
+            {
+                file.CopyTo(fileStream);
+
+                fileStream.Flush();
+            }
+            PaperDocument paperDocumentToAdd = new PaperDocument
+            {
+                Id=Guid.NewGuid(),
+                DocumentName=file.FileName
+            };
+            //dodaj vo tabelata za PaperDocument
+            paperDocumentRepository.Add(paperDocumentToAdd);
+
             //treba da kreira celosno popolnet objekt Paper, da go zachuva vo baza
             //isto taka treba da dodade konkretni objekti vo papersKeywords i vo papersUsers tabelite!
             Paper paperToAdd = new Paper
@@ -34,7 +55,11 @@ namespace ScientificJournal.Service.Implementation
                 Id = Guid.NewGuid(),
                 Title = p.Paper.Title,
                 AreaOfResearch = p.Paper.AreaOfResearch,
-                Abstract = p.Paper.Abstract
+                Abstract = p.Paper.Abstract,
+                PaperDocumentId=paperDocumentToAdd.Id,
+                PaperDocument=paperDocumentToAdd
+           
+                
             };
             paperRepository.Insert(paperToAdd);
 
@@ -97,11 +122,15 @@ namespace ScientificJournal.Service.Implementation
 
             List<ScienceUser> authors = papersUsersRepository.GetAuthorsForPaper(id);
 
+            //imeto na pdf dokumentot asociran so ovoj trud
+            String documentName = paperToFind.PaperDocument.DocumentName;
+
             PaperDetailsDTO model = new PaperDetailsDTO
             {
                 Paper = paperToFind,
                 Keywords = keywordsToSend,
-                Authors = authors
+                Authors = authors,
+                DocumentName=documentName
             };
 
             return model;
@@ -111,5 +140,6 @@ namespace ScientificJournal.Service.Implementation
         {
             throw new NotImplementedException();
         }
+       
     }
 }

@@ -31,7 +31,7 @@ namespace ScientificJournal.Repository
             builder.Entity<PapersUsers>().HasKey(z => new { z.PaperId, z.ScienceUserId });
             builder.Entity<PapersKeywords>().HasKey(z => new { z.PaperId, z.Keyword });
 
-            //definiranje na 2 OneToMany relacii i  definiranje na FKs vo ProductInShoopingCart
+            //definiranje na 2 OneToMany relacii i  definiranje na FKs vo 
             builder.Entity<PapersUsers>()
                 .HasOne(z => z.Paper)
                 .WithMany(p => p.AuthorsForPaper)
@@ -48,6 +48,14 @@ namespace ScientificJournal.Repository
                 .WithMany(p => p.Keywords)
                 .HasForeignKey(pk => pk.PaperId);
 
+            //definiranje na PK za PaperDocument  dali treba???
+
+            //OneToOne relacija megju Paper i PaperDocument
+            builder.Entity<Paper>()
+                .HasOne(p => p.PaperDocument)
+                .WithOne(pd => pd.Paper)
+                .HasForeignKey<Paper>(p => p.PaperDocumentId);
+                
         }
 
     }

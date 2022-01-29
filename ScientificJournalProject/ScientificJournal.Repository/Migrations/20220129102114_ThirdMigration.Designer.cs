@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScientificJournal.Repository;
 
 namespace ScientificJournal.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220129102114_ThirdMigration")]
+    partial class ThirdMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,32 +168,12 @@ namespace ScientificJournal.Repository.Migrations
                     b.Property<string>("AreaOfResearch")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PaperDocumentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PaperDocumentId")
-                        .IsUnique();
-
                     b.ToTable("Papers");
-                });
-
-            modelBuilder.Entity("ScientificJournal.Domain.DomainModels.PaperDocument", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DocumentName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaperDocument");
                 });
 
             modelBuilder.Entity("ScientificJournal.Domain.DomainModels.PapersKeywords", b =>
@@ -349,15 +331,6 @@ namespace ScientificJournal.Repository.Migrations
                     b.HasOne("ScientificJournal.Domain.Identity.ScienceUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ScientificJournal.Domain.DomainModels.Paper", b =>
-                {
-                    b.HasOne("ScientificJournal.Domain.DomainModels.PaperDocument", "PaperDocument")
-                        .WithOne("Paper")
-                        .HasForeignKey("ScientificJournal.Domain.DomainModels.Paper", "PaperDocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

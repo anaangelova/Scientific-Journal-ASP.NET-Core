@@ -33,7 +33,10 @@ namespace ScientificJournal.Repository.Implementation
 
         public Paper Get(Guid? id)
         {
-            return dbSet.SingleOrDefault(s => s.Id.Equals(id));
+            return dbSet
+                .Where(p => p.Id.Equals(id))
+                .Include(p => p.PaperDocument)
+                .FirstOrDefault();
         }
 
         public IEnumerable<Paper> GetAll()
@@ -60,5 +63,6 @@ namespace ScientificJournal.Repository.Implementation
             dbSet.Update(entity);
             context.SaveChanges();
         }
+
     }
 }

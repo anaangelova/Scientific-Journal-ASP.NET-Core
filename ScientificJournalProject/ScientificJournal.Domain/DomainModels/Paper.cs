@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,8 +13,10 @@ namespace ScientificJournal.Domain.DomainModels
         public string Abstract { get; set; }
         public virtual ICollection<PapersUsers> AuthorsForPaper { get; set; }
         public virtual ICollection<PapersKeywords> Keywords { get; set; }
-      
-        // + pdf dokument svojstvo!
+        public PaperDocument PaperDocument { get; set; }
+        public Guid PaperDocumentId { get; set; }
+        
+
 
 
 

@@ -3,7 +3,9 @@
 	ViewData["Title"] = "Details";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<head>
+	<script src="https://kit.fontawesome.com/799254cd45.js" crossorigin="anonymous"></script>
+</head>
 <h1>Details</h1>
 
 <div>
@@ -38,6 +40,8 @@
 		@for (int i = 0; i < Model.Authors.Count; i++)
 		{
 			var item = Model.Authors[i];
+			<dt class="col-sm-5 mt-5">Information about @(i+1) author</dt>
+			<dd class="col-sm-7"></dd>
 			<dt class="col-sm-2">
 				@Html.DisplayNameFor(model => model.Authors[i].Email)
 			</dt>
@@ -50,8 +54,24 @@
 			<dd class="col-sm-10">
 				@Html.DisplayFor(model => model.Authors[i].Biography)
 			</dd>
-		}
+			<dt class="col-sm-2">
+				@Html.DisplayNameFor(model => model.Authors[i].PhoneNumber)
+			</dt>
+			<dd class="col-sm-10">
+				@Html.DisplayFor(model => model.Authors[i].PhoneNumber)
+			</dd>
 
+		}
+		<dt class="col-sm-2 mt-3">
+			@Html.DisplayNameFor(model => model.DocumentName)
+		</dt>
+		<dd class="col-sm-10 mt-3">
+			<a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-name="@Model.DocumentName">
+				<i class="fas fa-file-pdf" style="color: red"></i>
+				@Html.DisplayFor(model => model.DocumentName)
+			</a>
+
+		</dd>
 	</dl>
 </div>
 <div>

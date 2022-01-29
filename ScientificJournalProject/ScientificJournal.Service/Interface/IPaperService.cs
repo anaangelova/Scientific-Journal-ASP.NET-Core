@@ -1,4 +1,5 @@
-﻿using ScientificJournal.Domain.DomainModels;
+﻿using Microsoft.AspNetCore.Http;
+using ScientificJournal.Domain.DomainModels;
 using ScientificJournal.Domain.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace ScientificJournal.Service.Interface
     {
         List<Paper> GetAllPapers();
         PaperDetailsDTO GetDetailsForPaper(Guid? id);
-        void CreateNewPaper(PaperDTO p);
+        void CreateNewPaper(PaperDTO p, IFormFile file);
         void UpdateExistingPaper(Paper p);
         void DeletePaper(Guid id);
     }
