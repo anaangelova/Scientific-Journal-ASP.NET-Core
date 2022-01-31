@@ -13,6 +13,9 @@ namespace ScientificJournal.Domain.DTO
         public String Keywords { get; set; }
         public List<ScienceUser> Authors { get; set; }
 
-        public string DocumentName { get; set; }
+        public Guid DocumentId { get; set; }
+        public bool NoEdit { get; set; }
+        public string PreviousAction { get; set; }
+        public string ConferenceName { get; set; }
     }
 }

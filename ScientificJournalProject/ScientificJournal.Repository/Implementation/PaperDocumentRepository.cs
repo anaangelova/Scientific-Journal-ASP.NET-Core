@@ -3,6 +3,7 @@ using ScientificJournal.Domain.DomainModels;
 using ScientificJournal.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ScientificJournal.Repository.Implementation
@@ -26,6 +27,12 @@ namespace ScientificJournal.Repository.Implementation
             }
             dbSet.Add(item);
             context.SaveChanges();
+        }
+
+        public PaperDocument GetDocumentById(Guid? id)
+        {
+            return dbSet
+                .Where(pd => pd.Id.Equals(id)).FirstOrDefault();
         }
     }
 }

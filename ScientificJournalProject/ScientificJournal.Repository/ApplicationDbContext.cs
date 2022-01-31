@@ -17,6 +17,8 @@ namespace ScientificJournal.Repository
 
         public virtual DbSet<Paper> Papers { get; set; }
         public virtual DbSet<PapersUsers> PapersUsers { get; set; }
+        public virtual DbSet<PapersKeywords> PapersKeywords { get; set; }
+        public virtual DbSet<Conference> Conferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -55,6 +57,12 @@ namespace ScientificJournal.Repository
                 .HasOne(p => p.PaperDocument)
                 .WithOne(pd => pd.Paper)
                 .HasForeignKey<Paper>(p => p.PaperDocumentId);
+            
+            //OneToMany Conference:Paper
+            builder.Entity<Paper>()
+                .HasOne(p => p.Conference)
+                .WithMany(c => c.Papers)
+                .HasForeignKey(p => p.ConferenceId);
                 
         }
 

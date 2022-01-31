@@ -133,5 +133,6 @@ namespace ScientificJournal.Web.Controllers
         {
             return View();
         }
+
     }
 }

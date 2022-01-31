@@ -12,5 +12,6 @@ namespace ScientificJournal.Domain.DTO
         public String AuthorFirst { get; set; }
         public String AuthorSecond { get; set; }
         public String AuthorThird { get; set; }
+        public String ConferenceName { get; set; }
     }
 }

@@ -43,10 +43,13 @@ namespace ScientificJournal.Web
             services.AddScoped(typeof(IPapersKeywordsRepository), typeof(PapersKeywordsRepository));
             services.AddScoped(typeof(IPapersUsersRepository), typeof(PapersUsersRepository));
             services.AddScoped(typeof(IPaperDocumentRepository), typeof(PaperDocumentRepository));
+            services.AddScoped(typeof(IConferenceRepository), typeof(ConferenceRepository));
+
 
             services.AddTransient<IPaperService, PaperService>();
             services.AddTransient<IUserService, UserService>();
-           
+            services.AddTransient<IPaperDocumentService, PaperDocumentService>();
+
 
             services.AddControllersWithViews();
             services.AddRazorPages();

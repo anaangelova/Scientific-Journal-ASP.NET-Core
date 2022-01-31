@@ -8,5 +8,6 @@ namespace ScientificJournal.Repository.Interface
     public interface IPaperDocumentRepository
     {
         void Add(PaperDocument item);
+        PaperDocument GetDocumentById(Guid? id);
     }
 }

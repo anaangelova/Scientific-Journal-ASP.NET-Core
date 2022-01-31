@@ -154,6 +154,26 @@ namespace ScientificJournal.Repository.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ScientificJournal.Domain.DomainModels.Conference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConferenceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conferences");
+                });
+
             modelBuilder.Entity("ScientificJournal.Domain.DomainModels.Paper", b =>
                 {
                     b.Property<Guid>("Id")
@@ -166,13 +186,21 @@ namespace ScientificJournal.Repository.Migrations
                     b.Property<string>("AreaOfResearch")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ConferenceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PaperDocumentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
 
                     b.HasIndex("PaperDocumentId")
                         .IsUnique();
@@ -355,6 +383,12 @@ namespace ScientificJournal.Repository.Migrations
 
             modelBuilder.Entity("ScientificJournal.Domain.DomainModels.Paper", b =>
                 {
+                    b.HasOne("ScientificJournal.Domain.DomainModels.Conference", "Conference")
+                        .WithMany("Papers")
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ScientificJournal.Domain.DomainModels.PaperDocument", "PaperDocument")
                         .WithOne("Paper")
                         .HasForeignKey("ScientificJournal.Domain.DomainModels.Paper", "PaperDocumentId")

@@ -1,0 +1,74 @@
+﻿@model ScientificJournal.Domain.DTO.PaperDTO
+@{
+	ViewData["Title"] = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit paper</h1>
+
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Edit" method="post">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="Paper.Id" />
+			<input type="hidden" asp-for="Paper.PaperDocumentId" />
+			<div class="form-group">
+				<label asp-for="Paper.Title" class="control-label"></label>
+				<input asp-for="Paper.Title" class="form-control" />
+				<span asp-validation-for="Paper.Title" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Paper.AreaOfResearch" class="control-label"></label>
+				<input asp-for="Paper.AreaOfResearch" class="form-control" />
+				<span asp-validation-for="Paper.AreaOfResearch" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Paper.Abstract" class="control-label"></label>
+				<input asp-for="Paper.Abstract" class="form-control" />
+				<span asp-validation-for="Paper.Abstract" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="ConferenceName" class="control-label"></label>
+				<input asp-for="ConferenceName" class="form-control" />
+				<span asp-validation-for="ConferenceName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Keywords" class="control-label"></label>
+				<input asp-for="Keywords" class="form-control" />
+				<span asp-validation-for="Keywords" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Paper.status" class="control-label"></label>
+				<input asp-for="Paper.status" class="form-control" disabled />
+			</div>
+			<div class="form-group">
+				<label asp-for="AuthorFirst" class="control-label"></label>
+				<input asp-for="AuthorFirst" class="form-control" />
+				<span asp-validation-for="AuthorFirst" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="AuthorSecond" class="control-label"></label>
+				<input asp-for="AuthorSecond" class="form-control" />
+				<span asp-validation-for="AuthorSecond" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="AuthorThird" class="control-label"></label>
+				<input asp-for="AuthorThird" class="form-control" />
+				<span asp-validation-for="AuthorThird" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="MyPapers" asp-controller="Paper" class="btn btn-secondary btn-sm">Back to List</a>
+</div>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -35,5 +35,34 @@ namespace ScientificJournal.Repository.Implementation
                 .Select(pk => pk.Keyword)
                 .ToList();
         }
+        public void Update(PapersKeywords entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+
+            dbSet.Update(entity);
+            context.SaveChanges();
+        }
+        public void Delete(PapersKeywords entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+            dbSet.Remove(entity);
+
+            context.SaveChanges();
+        }
+
+        public void DeleteAllKeywordsForPaper(Guid? id)
+        {
+            List<PapersKeywords> toDelete = dbSet.Where(pk => pk.PaperId.Equals(id)).ToList();
+
+            dbSet.RemoveRange(toDelete);
+            context.SaveChanges();
+
+        }
     }
 }

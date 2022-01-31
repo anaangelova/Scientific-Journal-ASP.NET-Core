@@ -35,13 +35,20 @@ namespace ScientificJournal.Repository.Implementation
         {
             return dbSet
                 .Where(p => p.Id.Equals(id))
+                .Include(p => p.AuthorsForPaper)
+                .ThenInclude(pa => pa.ScienceUser)
+                .Include(p => p.Keywords)
                 .Include(p => p.PaperDocument)
+                .Include(p => p.Conference)
+                .ThenInclude(c => c.Papers)
                 .FirstOrDefault();
         }
 
         public IEnumerable<Paper> GetAll()
         {
-            return dbSet.AsEnumerable();
+            return dbSet
+                .Where(p => p.status.Equals(Status.APPROVED))
+                .AsEnumerable();
         }
 
         public void Insert(Paper entity)
@@ -60,9 +67,35 @@ namespace ScientificJournal.Repository.Implementation
             {
                 throw new ArgumentNullException("entity");
             }
+            
             dbSet.Update(entity);
             context.SaveChanges();
+
+            
         }
 
+        public List<Paper> AllPapersForUser(string userId)
+        {
+            return null; //not implemented
+        }
+
+        public List<Paper> GetAllPendingPapers()
+        {
+            return dbSet
+                        .Where(p => p.status.Equals(Status.PENDING))
+                        .ToList();
+        }
+
+        public void ApprovePaper(Paper paper)
+        {
+            paper.status = Status.APPROVED;
+            Update(paper);
+        }
+
+        public void DenyPaper(Paper paper)
+        {
+            paper.status = Status.DENIED;
+            Update(paper);
+        }
     }
 }

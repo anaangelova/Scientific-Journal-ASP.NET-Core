@@ -1,0 +1,35 @@
+﻿@model List<ScientificJournal.Domain.DomainModels.Paper>
+@{
+	ViewData["Title"] = "Create";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>All pending papers</div>
+<div class="container">
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Paper Title</th>
+				<th scope="col">Area of Research</th>
+				<th scope="col"></th>
+				<th scope="col"></th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			@for (int i = 0; i < Model.Count; i++)
+			{
+				var item = Model[i];
+			<tr>
+				<td>@(i+1)</td>
+				<td>@item.Title</td>
+				<td>@item.AreaOfResearch</td>
+				<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-flag="1" asp-route-prev="ShowPendingPapers" class="btn btn-info">Details</a></td>
+				<td><a asp-action="ApprovePaper" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-success">Approve</a></td>
+				<td><a asp-action="DenyPaper" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-danger">Deny</a></td>
+			
+			</tr>
+			}
+		</tbody>
+	</table>
+</div>

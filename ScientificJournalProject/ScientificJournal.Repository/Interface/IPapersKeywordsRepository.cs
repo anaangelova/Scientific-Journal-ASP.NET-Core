@@ -9,5 +9,8 @@ namespace ScientificJournal.Repository.Interface
     {
         void Add(PapersKeywords item);
         List<string> FindKeywordsByPaper(Guid? id);
+        void Update(PapersKeywords entity);
+        void Delete(PapersKeywords entity);
+        void DeleteAllKeywordsForPaper(Guid? id);
     }
 }

@@ -30,12 +30,43 @@ namespace ScientificJournal.Repository.Implementation
             context.SaveChanges();
         }
 
+        public void Delete(PapersUsers entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+            dbSet.Remove(entity);
+
+            context.SaveChanges();
+        }
+
         public List<ScienceUser> GetAuthorsForPaper(Guid? id)
         {
             return dbSet
                 .Where(pu => pu.PaperId.Equals(id))
                 .Include(pu => pu.ScienceUser)
                 .Select(pu => pu.ScienceUser).ToList();
+        }
+
+        public List<Paper> GetPapersForUser(string userId)
+        {
+            return dbSet
+                .Where(pu => pu.ScienceUserId.Equals(userId))
+                .Include(pu => pu.Paper)
+                .Select(pu => pu.Paper)
+                .ToList();
+        }
+
+        public void Update(PapersUsers entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+
+            dbSet.Update(entity);
+            context.SaveChanges();
         }
     }
 }

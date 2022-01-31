@@ -31,10 +31,22 @@
 			@Html.DisplayFor(model => model.Paper.Abstract)
 		</dd>
 		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ConferenceName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.ConferenceName)
+		</dd>
+		<dt class="col-sm-2">
 			@Html.DisplayNameFor(model => model.Keywords)
 		</dt>
 		<dd class="col-sm-10">
 			@Html.DisplayFor(model => model.Keywords)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Paper.status)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Paper.status)
 		</dd>
 
 		@for (int i = 0; i < Model.Authors.Count; i++)
@@ -52,29 +64,50 @@
 				@Html.DisplayNameFor(model => model.Authors[i].Biography)
 			</dt>
 			<dd class="col-sm-10">
-				@Html.DisplayFor(model => model.Authors[i].Biography)
+				@if (item.Biography != null && item.Biography != "")
+				{
+					@Html.DisplayFor(model => model.Authors[i].Biography)
+				}
+				else
+				{
+					@:This user does not exist in our database, we cannot provide any further details about them.
+
+				}
 			</dd>
 			<dt class="col-sm-2">
 				@Html.DisplayNameFor(model => model.Authors[i].PhoneNumber)
 			</dt>
 			<dd class="col-sm-10">
-				@Html.DisplayFor(model => model.Authors[i].PhoneNumber)
+				@if (item.PhoneNumber != null && item.Biography != "")
+				{
+					@Html.DisplayFor(model => model.Authors[i].PhoneNumber)
+				}
+				else
+				{
+					@:N/A
+
+				}
 			</dd>
 
 		}
 		<dt class="col-sm-2 mt-3">
-			@Html.DisplayNameFor(model => model.DocumentName)
+			@Html.DisplayNameFor(model => model.Paper.PaperDocument.DocumentName)
 		</dt>
 		<dd class="col-sm-10 mt-3">
-			<a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-name="@Model.DocumentName">
+			<a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-documentId="@Model.DocumentId">
 				<i class="fas fa-file-pdf" style="color: red"></i>
-				@Html.DisplayFor(model => model.DocumentName)
+				@Html.DisplayFor(model => model.Paper.PaperDocument.DocumentName)
 			</a>
 
 		</dd>
 	</dl>
 </div>
 <div>
-	<a asp-action="Edit" asp-route-id="@Model.Paper.Id">Edit</a> |
-	<a asp-action="Index">Back to List</a>
+	@if (!Model.NoEdit)
+	{
+		<a asp-action="Edit" asp-route-id="@Model.Paper.Id">Edit</a>
+	}
+		<a asp-action="@Model.PreviousAction" asp-controller="Paper" class="btn btn-secondary btn-sm">Back to List</a>
+	
+
 </div>

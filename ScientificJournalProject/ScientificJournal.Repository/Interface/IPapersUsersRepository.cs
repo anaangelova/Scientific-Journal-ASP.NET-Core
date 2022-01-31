@@ -10,5 +10,8 @@ namespace ScientificJournal.Repository.Interface
     {
         void Add(PapersUsers item);
         List<ScienceUser> GetAuthorsForPaper(Guid? id);
+        List<Paper> GetPapersForUser(string userId);
+        void Update(PapersUsers entity);
+        void Delete(PapersUsers entity);
     }
 }

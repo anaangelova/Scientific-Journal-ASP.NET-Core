@@ -19,20 +19,32 @@ namespace ScientificJournal.Service.Implementation
         private readonly IUserRepository userRepository;
         private readonly IPapersUsersRepository papersUsersRepository;
         private readonly IPaperDocumentRepository paperDocumentRepository;
+        private readonly IConferenceRepository conferenceRepository;
 
-        public PaperService(IPaperRepository paperRepository, IPapersKeywordsRepository papersKeywordsRepository, IUserRepository userRepository, IPapersUsersRepository papersUsersRepository, IPaperDocumentRepository paperDocumentRepository)
+        public PaperService(IPaperRepository paperRepository, IPapersKeywordsRepository papersKeywordsRepository, IUserRepository userRepository, IPapersUsersRepository papersUsersRepository, IPaperDocumentRepository paperDocumentRepository, IConferenceRepository conferenceRepository)
         {
             this.paperRepository = paperRepository;
             this.papersKeywordsRepository = papersKeywordsRepository;
             this.userRepository = userRepository;
             this.papersUsersRepository = papersUsersRepository;
             this.paperDocumentRepository = paperDocumentRepository;
+            this.conferenceRepository = conferenceRepository;
         }
 
         public void CreateNewPaper(PaperDTO p,IFormFile file)
         {
-            //dopolnitelno treba da se zachuva i prateniot pdf dokument!!!
-            string pathToUpload = $"{Directory.GetCurrentDirectory()}\\files\\{file.FileName}";
+       
+            PaperDocument paperDocumentToAdd = new PaperDocument
+            {
+                Id = Guid.NewGuid(),
+                
+            };
+            string trimmedName = file.FileName.Replace(".pdf", paperDocumentToAdd.Id.ToString());
+            string finalName = trimmedName + ".pdf";
+            paperDocumentToAdd.DocumentName = finalName;
+      
+
+            string pathToUpload = $"{Directory.GetCurrentDirectory()}\\files\\{paperDocumentToAdd.DocumentName}";
 
             using (FileStream fileStream = System.IO.File.Create(pathToUpload))
             {
@@ -40,16 +52,17 @@ namespace ScientificJournal.Service.Implementation
 
                 fileStream.Flush();
             }
-            PaperDocument paperDocumentToAdd = new PaperDocument
+            //treba da ja definirame konkretnata konferencija!
+            Conference toFind = conferenceRepository.GetConferenceByName(p.ConferenceName);
+            if (toFind == null)
             {
-                Id=Guid.NewGuid(),
-                DocumentName=file.FileName
-            };
-            //dodaj vo tabelata za PaperDocument
-            paperDocumentRepository.Add(paperDocumentToAdd);
-
-            //treba da kreira celosno popolnet objekt Paper, da go zachuva vo baza
-            //isto taka treba da dodade konkretni objekti vo papersKeywords i vo papersUsers tabelite!
+                toFind = new Conference
+                {
+                    ConferenceName = p.ConferenceName
+                };
+                conferenceRepository.Insert(toFind);
+            }
+    
             Paper paperToAdd = new Paper
             {
                 Id = Guid.NewGuid(),
@@ -57,13 +70,16 @@ namespace ScientificJournal.Service.Implementation
                 AreaOfResearch = p.Paper.AreaOfResearch,
                 Abstract = p.Paper.Abstract,
                 PaperDocumentId=paperDocumentToAdd.Id,
-                PaperDocument=paperDocumentToAdd
-           
+                PaperDocument=paperDocumentToAdd,
+                status=Status.PENDING,
+                Conference=toFind,
+                ConferenceId=toFind.Id
                 
+              
             };
-            paperRepository.Insert(paperToAdd);
-
-            List<string> keywords = p.Keywords.Split(" ").ToList();
+            
+            List<PapersKeywords> tryList = new List<PapersKeywords>();
+            List<string> keywords = p.Keywords.Trim(',').Split(" ").ToList();
             foreach(string s in keywords)
             {
                 PapersKeywords papersKeywordsToAdd = new PapersKeywords
@@ -71,11 +87,14 @@ namespace ScientificJournal.Service.Implementation
                     PaperId = paperToAdd.Id,
                     Keyword = s
                 };
-                papersKeywordsRepository.Add(papersKeywordsToAdd);
-                //dodaj vo bazata za papersKeywords
+                tryList.Add(papersKeywordsToAdd);
+        
             }
+            paperToAdd.Keywords = tryList;
+            
 
             List<string> authors = new List<string>();
+            List<PapersUsers> papersUsersList = new List<PapersUsers>();
             authors.Add(p.AuthorFirst);
             authors.Add(p.AuthorSecond);
             authors.Add(p.AuthorThird);
@@ -84,25 +103,42 @@ namespace ScientificJournal.Service.Implementation
                 if (s != null)
                 {
                     ScienceUser scienceUser = userRepository.GetByEmail(s);
-                    PapersUsers itemToAdd = new PapersUsers
+                    PapersUsers itemToAdd;
+                    if (scienceUser == null) //ne postoi korisnikot vo bazata
                     {
-                        PaperId = paperToAdd.Id,
-                        ScienceUserId = scienceUser.Id
-                    };
-                    papersUsersRepository.Add(itemToAdd);
+                        scienceUser = new ScienceUser
+                        {
+                            Email = s,
+                        };
+                        userRepository.Insert(scienceUser);
+                        itemToAdd = new PapersUsers
+                        {
+                            PaperId = paperToAdd.Id,
+                            ScienceUserId = scienceUser.Id
+                        };
+                    }
+                    else
+                    {
+                        itemToAdd = new PapersUsers
+                        {
+                            PaperId = paperToAdd.Id,
+                            ScienceUserId = scienceUser.Id
+                        };
+
+                    }
+                   
+                    papersUsersList.Add(itemToAdd);
+                
                 }
             }
-
-
+            paperToAdd.AuthorsForPaper = papersUsersList;
+            paperRepository.Insert(paperToAdd);
 
         }
 
-        public void DeletePaper(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        public List<Paper> GetAllPapers()
+        public List<Paper> GetAllPapers() //only approved papers
         {
             return paperRepository.GetAll().ToList();
         }
@@ -110,36 +146,159 @@ namespace ScientificJournal.Service.Implementation
         public PaperDetailsDTO GetDetailsForPaper(Guid? id)
         {
             Paper paperToFind = paperRepository.Get(id);
-           
-            List<string> keywords = papersKeywordsRepository.FindKeywordsByPaper(id);
+            
+            List<string> keywordsList = paperToFind.Keywords.Select(pk => pk.Keyword).ToList();
             StringBuilder stringBuilder = new StringBuilder();
-            foreach(string k in keywords)
+            foreach(string k in keywordsList)
             {
                 stringBuilder.Append(k+" ");
 
             }
             String keywordsToSend = stringBuilder.ToString();
-
-            List<ScienceUser> authors = papersUsersRepository.GetAuthorsForPaper(id);
-
-            //imeto na pdf dokumentot asociran so ovoj trud
-            String documentName = paperToFind.PaperDocument.DocumentName;
-
+            
+       
+            List<ScienceUser> authorsList = paperToFind.AuthorsForPaper.Select(pa => pa.ScienceUser).ToList();
             PaperDetailsDTO model = new PaperDetailsDTO
             {
                 Paper = paperToFind,
                 Keywords = keywordsToSend,
-                Authors = authors,
-                DocumentName=documentName
+                Authors = authorsList,
+                DocumentId=paperToFind.PaperDocumentId,
+                ConferenceName=paperToFind.Conference.ConferenceName
             };
 
             return model;
         }
-
-        public void UpdateExistingPaper(Paper p)
+        public PaperDTO GetDetailsForEdit(Guid? id)
         {
-            throw new NotImplementedException();
+            PaperDetailsDTO tmp = this.GetDetailsForPaper(id);
+            if(tmp.Authors.Count == 3)
+            {
+                return new PaperDTO
+                {
+                    Paper = tmp.Paper,
+                    Keywords = tmp.Keywords,
+                    AuthorFirst = tmp.Authors.ElementAt(0).Email,
+                    AuthorSecond = tmp.Authors.ElementAt(1).Email,
+                    AuthorThird = tmp.Authors.ElementAt(2).Email,
+                    ConferenceName=tmp.ConferenceName
+                };
+            }else if (tmp.Authors.Count == 2)
+            {
+                return new PaperDTO
+                {
+                    Paper = tmp.Paper,
+                    Keywords = tmp.Keywords,
+                    AuthorFirst = tmp.Authors.ElementAt(0).Email,
+                    AuthorSecond = tmp.Authors.ElementAt(1).Email,
+                    AuthorThird = "",
+                    ConferenceName=tmp.ConferenceName
+                };
+            }
+            else return new PaperDTO
+            {
+                Paper = tmp.Paper,
+                Keywords = tmp.Keywords,
+                AuthorFirst = tmp.Authors.ElementAt(0).Email,
+                AuthorSecond ="",
+                AuthorThird = "",
+                ConferenceName = tmp.ConferenceName
+            };
+
         }
-       
+
+        public void UpdateExistingPaper(PaperDTO p)
+        {
+            Paper paperToUpdate = paperRepository.Get(p.Paper.Id);
+
+            List<PapersKeywords> paperKeywordsList = new List<PapersKeywords>();
+            List<string> keywords = p.Keywords.Trim(',').Split(" ").ToList();
+
+        /*    papersKeywordsRepository.DeleteAllKeywordsForPaper(paperToUpdate.Id); //inaku frla exception*/
+            foreach (string s in keywords)
+            {
+                PapersKeywords papersKeywordsToAdd = new PapersKeywords //new moze da e problematicno??
+                {
+                    PaperId = p.Paper.Id,
+                    Keyword = s,
+                    Paper=p.Paper
+                };
+                
+                paperKeywordsList.Add(papersKeywordsToAdd);
+           
+            }
+            paperToUpdate.Keywords = paperKeywordsList;
+
+            List<string> authors = new List<string>();
+            List<PapersUsers> papersUsersList = new List<PapersUsers>();
+            authors.Add(p.AuthorFirst);
+            authors.Add(p.AuthorSecond);
+            authors.Add(p.AuthorThird);
+            foreach (string s in authors)
+            {
+                if (s != null && s!="")
+                {
+                    ScienceUser scienceUser = userRepository.GetByEmail(s);
+                    PapersUsers itemToAdd = new PapersUsers
+                    {
+                        PaperId =p.Paper.Id,
+                        Paper=p.Paper,
+                        ScienceUser=scienceUser,
+                        ScienceUserId = scienceUser.Id
+                    };
+                    papersUsersList.Add(itemToAdd);
+                    /*papersUsersRepository.Update(itemToAdd);*/
+                   
+                }
+            }
+            paperToUpdate.AuthorsForPaper = papersUsersList;
+            paperToUpdate.status = Status.PENDING;
+            paperToUpdate.Abstract = p.Paper.Abstract;
+            paperToUpdate.Title = p.Paper.Title;
+            paperToUpdate.AreaOfResearch = p.Paper.AreaOfResearch;
+            
+            Conference toFind = conferenceRepository.GetConferenceByName(p.ConferenceName);
+            if (toFind == null)
+            {
+                toFind = new Conference
+                {
+                    ConferenceName = p.ConferenceName
+                };
+                conferenceRepository.Insert(toFind);
+            }
+            paperToUpdate.Conference = toFind;
+            paperToUpdate.ConferenceId = toFind.Id;
+
+            paperRepository.Update(paperToUpdate);
+            
+        }
+        public void DeletePaper(Guid id)
+        {
+            Paper paperToDelete = this.GetDetailsForPaper(id).Paper;
+            paperRepository.Delete(paperToDelete);
+        }
+
+        public List<Paper> GetPapersForUser(string userId)
+        {
+            return papersUsersRepository.GetPapersForUser(userId);
+        }
+
+        public List<Paper> GetAllPendingPapers()
+        {
+            return paperRepository.GetAllPendingPapers();
+        }
+
+        public void ApprovePaper(Guid? id)
+        {
+            Paper paperToApprove = GetDetailsForPaper(id).Paper;
+            paperRepository.ApprovePaper(paperToApprove);
+
+        }
+
+        public void DenyPaper(Guid? id)
+        {
+            Paper paperToDeny = GetDetailsForPaper(id).Paper;
+            paperRepository.DenyPaper(paperToDeny);
+        }
     }
 }

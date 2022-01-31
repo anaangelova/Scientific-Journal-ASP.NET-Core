@@ -3,12 +3,8 @@
 	ViewData["Title"] = "Create";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div>List all papers</div>
+<div>All published papers</div>
 <div class="container">
-	<div class="m-3">
-		<a class="btn btn-success" asp-controller="Paper" asp-action="Create">Add new Product</a>
-	</div>
-
 	<table class="table table-hover">
 		<thead> 
 			<tr>
@@ -26,7 +22,7 @@
 					<td>@(i+1)</td>
 					<td>@item.Title</td>
 					<td>@item.AreaOfResearch</td>
-					<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-info">Details</a></td>
+					<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-flag="1" asp-route-prev="Index" class="btn btn-info">Details</a></td>
 
 				</tr>
 			}
