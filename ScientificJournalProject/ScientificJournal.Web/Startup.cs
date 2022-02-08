@@ -49,6 +49,7 @@ namespace ScientificJournal.Web
             services.AddTransient<IPaperService, PaperService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPaperDocumentService, PaperDocumentService>();
+            services.AddTransient<IConferenceService, ConferenceService>();
 
 
             services.AddControllersWithViews();

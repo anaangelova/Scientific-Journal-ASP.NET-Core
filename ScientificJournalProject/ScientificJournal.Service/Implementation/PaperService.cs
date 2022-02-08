@@ -53,7 +53,7 @@ namespace ScientificJournal.Service.Implementation
                 fileStream.Flush();
             }
             //treba da ja definirame konkretnata konferencija!
-            Conference toFind = conferenceRepository.GetConferenceByName(p.ConferenceName);
+            Conference toFind = conferenceRepository.GetConferenceById(p.ConferenceId);
             if (toFind == null)
             {
                 toFind = new Conference
@@ -143,25 +143,29 @@ namespace ScientificJournal.Service.Implementation
             return paperRepository.GetAll().ToList();
         }
 
+        private String GetKeywordsAsString(List<string> keywordsList)
+        {
+            
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (string k in keywordsList)
+            {
+                stringBuilder.Append(k + " ");
+
+            }
+            String keywordsToSend = stringBuilder.ToString(); //kako lista podobro????
+            return keywordsToSend;
+        }
         public PaperDetailsDTO GetDetailsForPaper(Guid? id)
         {
             Paper paperToFind = paperRepository.Get(id);
             
             List<string> keywordsList = paperToFind.Keywords.Select(pk => pk.Keyword).ToList();
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach(string k in keywordsList)
-            {
-                stringBuilder.Append(k+" ");
-
-            }
-            String keywordsToSend = stringBuilder.ToString();
             
-       
             List<ScienceUser> authorsList = paperToFind.AuthorsForPaper.Select(pa => pa.ScienceUser).ToList();
             PaperDetailsDTO model = new PaperDetailsDTO
             {
                 Paper = paperToFind,
-                Keywords = keywordsToSend,
+                Keywords = keywordsList, //prethodno beshe keywordsToSend
                 Authors = authorsList,
                 DocumentId=paperToFind.PaperDocumentId,
                 ConferenceName=paperToFind.Conference.ConferenceName
@@ -172,37 +176,44 @@ namespace ScientificJournal.Service.Implementation
         public PaperDTO GetDetailsForEdit(Guid? id)
         {
             PaperDetailsDTO tmp = this.GetDetailsForPaper(id);
+            String keywordsAsString = this.GetKeywordsAsString(tmp.Keywords);
             if(tmp.Authors.Count == 3)
             {
                 return new PaperDTO
                 {
                     Paper = tmp.Paper,
-                    Keywords = tmp.Keywords,
+                    Keywords = keywordsAsString,
                     AuthorFirst = tmp.Authors.ElementAt(0).Email,
                     AuthorSecond = tmp.Authors.ElementAt(1).Email,
                     AuthorThird = tmp.Authors.ElementAt(2).Email,
-                    ConferenceName=tmp.ConferenceName
+                    ConferenceName=tmp.ConferenceName,
+                    ConferenceId=tmp.Paper.ConferenceId,
+                    Conferences=conferenceRepository.GetAllConferences()
                 };
             }else if (tmp.Authors.Count == 2)
             {
                 return new PaperDTO
                 {
                     Paper = tmp.Paper,
-                    Keywords = tmp.Keywords,
+                    Keywords = keywordsAsString,
                     AuthorFirst = tmp.Authors.ElementAt(0).Email,
                     AuthorSecond = tmp.Authors.ElementAt(1).Email,
                     AuthorThird = "",
-                    ConferenceName=tmp.ConferenceName
+                    ConferenceName=tmp.ConferenceName,
+                    ConferenceId = tmp.Paper.ConferenceId,
+                    Conferences = conferenceRepository.GetAllConferences()
                 };
             }
             else return new PaperDTO
             {
                 Paper = tmp.Paper,
-                Keywords = tmp.Keywords,
+                Keywords = keywordsAsString,
                 AuthorFirst = tmp.Authors.ElementAt(0).Email,
                 AuthorSecond ="",
                 AuthorThird = "",
-                ConferenceName = tmp.ConferenceName
+                ConferenceName = tmp.ConferenceName,
+                ConferenceId = tmp.Paper.ConferenceId,
+                Conferences = conferenceRepository.GetAllConferences()
             };
 
         }
@@ -257,7 +268,7 @@ namespace ScientificJournal.Service.Implementation
             paperToUpdate.Title = p.Paper.Title;
             paperToUpdate.AreaOfResearch = p.Paper.AreaOfResearch;
             
-            Conference toFind = conferenceRepository.GetConferenceByName(p.ConferenceName);
+            Conference toFind = conferenceRepository.GetConferenceById(p.ConferenceId);
             if (toFind == null)
             {
                 toFind = new Conference
@@ -300,5 +311,7 @@ namespace ScientificJournal.Service.Implementation
             Paper paperToDeny = GetDetailsForPaper(id).Paper;
             paperRepository.DenyPaper(paperToDeny);
         }
+
+       
     }
 }

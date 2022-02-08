@@ -8,8 +8,9 @@ namespace ScientificJournal.Domain.DomainModels
     {
         public Guid Id { get; set; }
         public string ConferenceName { get; set; }
+        public string ConferenceImage { get; set; }
         public DateTime Date { get; set; }
         public double Price { get; set; }
-        public virtual ICollection<Paper> Papers { get; set; }
+        public virtual List<Paper> Papers { get; set; }
     }
 }

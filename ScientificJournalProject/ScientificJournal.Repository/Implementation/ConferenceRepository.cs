@@ -26,9 +26,12 @@ namespace ScientificJournal.Repository.Implementation
 
         public Conference GetConferenceById(Guid? id)
         {
-            return dbSet.Where(c => c.Id.Equals(id))
+            
+            Conference c= dbSet.Where(c => c.Id.Equals(id))
                 .Include(c => c.Papers)
                 .FirstOrDefault();
+            c.Papers = c.Papers.Where(p => p.status.Equals(Status.APPROVED)).ToList();
+            return c;
         }
 
         public Conference GetConferenceByName(string name)
@@ -41,7 +44,8 @@ namespace ScientificJournal.Repository.Implementation
         public List<Paper> GetPapersForConference(string name)
         {
             Conference conference = GetConferenceByName(name);
-            return conference.Papers.ToList();
+            List<Paper> all= conference.Papers.Where(p => p.status.Equals(Status.APPROVED)).ToList();
+            return all;
 
         }
 

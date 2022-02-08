@@ -1,0 +1,44 @@
+﻿@model ScientificJournal.Domain.DomainModels.Conference
+@{
+	ViewData["Title"] = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+	<section class="member-details">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 col-md-10">
+					
+					<div class="member_designation">
+						<br />
+						<h2 class="text-justify">@Html.DisplayFor(model => model.ConferenceName)</h2>
+					</div>
+					<div class="member_desc">
+						<h4>@Html.DisplayNameFor(model => model.Date)</h4>
+						<p>@Html.DisplayFor(model => model.Date)</p>
+					</div>
+					<hr />
+					<div>
+						<h4>Price</h4>
+						<p class="text-black font-italic">@Html.DisplayFor(model => model.Price)</p>
+					</div>
+					<hr />
+
+					<div>
+						<h4>Papers published on conference</h4>
+						@for (int i = 0; i < Model.Papers.Count; i++)
+						{
+							var item = Model.Papers[i];
+							<a class="btn-link" asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id">@item.Title</a>
+								
+						
+						}
+					</div>
+					<hr />
+					
+
+				</div>
+			</div>
+	</section>
+</div>

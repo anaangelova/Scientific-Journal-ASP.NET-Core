@@ -27,12 +27,17 @@
 		<dt class="col-sm-2">
 			@Html.DisplayNameFor(model => model.Keywords)
 		</dt>
+
 		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Keywords)
+			@for (int i = 0; i < Model.Keywords.Count; i++)
+			{
+				<span class="rounded-pill mx-lg-1 mx-md-0 p-lg-2 p-md-1" style="background-color:lightgreen">@Model.Keywords[i]  </span>
+			}
 		</dd>
-		
+
 	</dl>
 
+	
 	<form asp-action="Delete" method="post">
 		<input type="hidden" asp-for="Paper.Id" />
 		<input type="submit" value="Delete" class="btn btn-danger" /> |

@@ -10,12 +10,13 @@ namespace ScientificJournal.Domain.DTO
     public class PaperDetailsDTO
     {
         public Paper Paper { get; set; }
-        public String Keywords { get; set; }
+        public List<String> Keywords { get; set; }
         public List<ScienceUser> Authors { get; set; }
 
         public Guid DocumentId { get; set; }
         public bool NoEdit { get; set; }
         public string PreviousAction { get; set; }
         public string ConferenceName { get; set; }
+
     }
 }

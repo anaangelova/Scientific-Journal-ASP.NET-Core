@@ -20,5 +20,7 @@ namespace ScientificJournal.Service.Interface
         List<Paper> GetAllPendingPapers();
         void ApprovePaper(Guid? id);
         void DenyPaper(Guid? id);
+
+        
     }
 }

@@ -97,5 +97,10 @@ namespace ScientificJournal.Repository.Implementation
             paper.status = Status.DENIED;
             Update(paper);
         }
+
+        public List<Paper> GetPapersForConference(Guid? conferenceId)
+        {
+            return dbSet.Where(p => p.ConferenceId.Equals(conferenceId) && p.status.Equals(Status.APPROVED)).ToList();
+        }
     }
 }

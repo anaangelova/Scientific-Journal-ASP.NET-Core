@@ -17,5 +17,6 @@ namespace ScientificJournal.Repository.Interface
         List<Paper> GetAllPendingPapers();
         void ApprovePaper(Paper paper);
         void DenyPaper(Paper paper);
+        List<Paper> GetPapersForConference(Guid? conferenceId);
     }
 }

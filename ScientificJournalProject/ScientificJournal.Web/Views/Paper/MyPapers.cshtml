@@ -3,16 +3,16 @@
 	ViewData["Title"] = "Create";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div>List all my papers</div>
 <div class="container">
 	<div class="m-3">
 		<a class="btn btn-success" asp-controller="Paper" asp-action="Create">Add new Paper</a>
 	</div>
+	<br/>
 
 	<table class="table table-hover">
-		<thead>
+		<thead class="thead-dark">
 			<tr>
-				<th scope="col">#</th>
+				<th scope="col"></th>
 				<th scope="col">Paper Title</th>
 				<th scope="col">Area of Research</th>
 				<th scope="col">Status of paper</th>
@@ -21,21 +21,20 @@
 				<th scope="col"></th>
 			</tr>
 		</thead>
-		<tbody>
-			@for (int i = 0; i < Model.Count; i++)
-			{
-				var item = Model[i];
-			<tr>
-				<td>@(i+1)</td>
-				<td>@item.Title</td>
-				<td>@item.AreaOfResearch</td>
-				<td>@item.status</td>
-				<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-prev="MyPapers" class="btn btn-info">Details</a></td>
-				<td><a asp-action="Edit" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-secondary">Edit</a></td>
-				<td><a asp-action="Delete" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-danger">Delete</a></td>
-
-			</tr>
-			}
-		</tbody>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@item.Title</td>
+                        <td>@item.AreaOfResearch</td>
+                        <td>@item.status</td>
+                        <td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-prev="MyPapers" class="btn btn-light">Details</a></td>
+                        <td><a asp-action="Edit" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-secondary">Edit</a></td>
+                        <td><a asp-action="Delete" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                }
+        </tbody>
 	</table>
 </div>

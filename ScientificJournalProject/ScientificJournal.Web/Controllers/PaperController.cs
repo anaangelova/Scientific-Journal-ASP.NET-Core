@@ -22,30 +22,40 @@ namespace ScientificJournal.Web.Controllers
 
         private readonly IPaperService paperService;
         private readonly IPaperDocumentService paperDocumentService;
+        private readonly IConferenceService conferenceService;
         private readonly UserManager<ScienceUser> userManager;
 
-        public PaperController(IPaperService paperService, IPaperDocumentService paperDocumentService, UserManager<ScienceUser> userManager)
+        public PaperController(IPaperService paperService, IPaperDocumentService paperDocumentService, IConferenceService conferenceService, UserManager<ScienceUser> userManager)
         {
             this.paperService = paperService;
             this.paperDocumentService = paperDocumentService;
+            this.conferenceService = conferenceService;
             this.userManager = userManager;
         }
 
         [AllowAnonymous]
         public IActionResult Index()
         {
-            //gi lista site approved papers
+            //gi lista site approved papers + site konferencii da se prikazhat
             List<Paper> allPapers = paperService.GetAllPapers();
-            return View(allPapers);
+            List<Conference> allConferences = conferenceService.GetConferences();
+            PapersConferencesDTO dto = new PapersConferencesDTO
+            {
+                Papers = allPapers,
+                Conferences = allConferences
+            };
+            return View(dto);
         }
 
         public IActionResult Create()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ScienceUser currentUser = userManager.FindByIdAsync(userId.ToString()).Result;
+            List<Conference> conferences = conferenceService.GetConferences();
             PaperDTO model = new PaperDTO
             {
-                AuthorFirst = currentUser.Email
+                AuthorFirst = currentUser.Email,
+                Conferences = conferences
             };
             return View(model);
         }
@@ -123,16 +133,17 @@ namespace ScientificJournal.Web.Controllers
                 return NotFound();
             }
 
-            var product = paperService.GetDetailsForEdit(id);
-            if (product == null)
+            var paper = paperService.GetDetailsForEdit(id);
+            if (paper == null)
             {
                 return NotFound();
             }
-            return View(product);
+           
+            return View(paper);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Paper,Keywords,ConferenceName,AuthorFirst,AuthorSecond,AuthorThird")] PaperDTO paperDto)
+        public IActionResult Edit(Guid id, [Bind("Paper,Keywords,ConferenceName,ConferenceId,AuthorFirst,AuthorSecond,AuthorThird")] PaperDTO paperDto)
         {
             string authors = paperDto.AuthorFirst + " " + paperDto.AuthorSecond + " " + paperDto.AuthorThird;
             if (!isAuthor(authors))
@@ -201,12 +212,13 @@ namespace ScientificJournal.Web.Controllers
             ScienceUser currentUser = userManager.FindByIdAsync(userId.ToString()).Result;
             if (currentUser.isAdmin)
             {
-                List<Paper> pendingPapers= paperService.GetAllPendingPapers();
+                List<Paper> pendingPapers = paperService.GetAllPendingPapers();
                 return View(pendingPapers);
             }
-            else return StatusCode(403);
+            else return View("AdminRoleRequiered");
 
         }
+        
 
         public IActionResult ApprovePaper(Guid? id)
         {
@@ -217,7 +229,7 @@ namespace ScientificJournal.Web.Controllers
                 paperService.ApprovePaper(id);
                 return RedirectToAction("ShowPendingPapers");
             }
-            else return StatusCode(403);
+            else return View("AdminRoleRequiered");
         }
 
         public IActionResult DenyPaper(Guid? id)
@@ -229,7 +241,7 @@ namespace ScientificJournal.Web.Controllers
                 paperService.DenyPaper(id);
                 return RedirectToAction("ShowPendingPapers");
             }
-            else return StatusCode(403);
+            else return View("AdminRoleRequiered");
         }
 
         private bool isAuthor(string authors)
@@ -240,5 +252,7 @@ namespace ScientificJournal.Web.Controllers
             return authors.Split(" ").Any(a => a.Equals(authorEmail));
             
         }
+
+        
     }
 }

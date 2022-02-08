@@ -1,113 +1,123 @@
 ﻿@model ScientificJournal.Domain.DTO.PaperDetailsDTO
 @{
-	ViewData["Title"] = "Details";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<head>
-	<script src="https://kit.fontawesome.com/799254cd45.js" crossorigin="anonymous"></script>
-</head>
-<h1>Details</h1>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+    <section class="member-details">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-md-10">
+                    <div class="member_designation">
+                        <br />
+                        <h2 class="text-justify">@Html.DisplayFor(model => model.Paper.Title)</h2>
+                    </div>
+                    <div class="member_desc">
+                        <h4>@Html.DisplayNameFor(model => model.Paper.Abstract)</h4>
+                        <p>@Html.DisplayFor(model => model.Paper.Abstract)</p>
+                    </div>
+                    <hr />
+                    <div>
+                        <h4>Area Of Research</h4>
+                        <p class="text-black font-italic">@Html.DisplayFor(model => model.Paper.AreaOfResearch)</p>
+                    </div>
+                    <hr />
+                    <div>
+                        <h4>Conference</h4>
+                        <a asp-controller="Conference" asp-action="Details" asp-route-id="@Model.Paper.ConferenceId"  class="text-black font-italic">@Html.DisplayFor(model => model.ConferenceName)</a>
+                    </div>
+                    <hr />
+					<div>
+						<h4>@Html.DisplayNameFor(model => model.Keywords)</h4>
+						<p>
+							<i class="fa fa-chevron-circle-right " aria-hidden="true"></i>
+							@for (int i = 0; i < Model.Keywords.Count; i++)
+							{
+								var item = Model.Keywords[i];
+								if (item != " " && item!="" && item!="  ")
+								{
+									<span class="rounded-pill mx-lg-1 mx-md-0 p-lg-2 p-md-1" style="background-color:lightgreen">@Model.Keywords[i]  </span>
+								}
 
-<div>
-	<h4>Research paper</h4>
-	<hr />
-	<dl class="row">
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Paper.Title)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Paper.Title)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Paper.AreaOfResearch)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Paper.AreaOfResearch)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Paper.Abstract)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Paper.Abstract)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.ConferenceName)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.ConferenceName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Keywords)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Keywords)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Paper.status)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Paper.status)
-		</dd>
 
-		@for (int i = 0; i < Model.Authors.Count; i++)
-		{
-			var item = Model.Authors[i];
-			<dt class="col-sm-5 mt-5">Information about @(i+1) author</dt>
-			<dd class="col-sm-7"></dd>
-			<dt class="col-sm-2">
-				@Html.DisplayNameFor(model => model.Authors[i].Email)
-			</dt>
-			<dd class="col-sm-10">
-				@Html.DisplayFor(model => model.Authors[i].Email)
-			</dd>
-			<dt class="col-sm-2">
-				@Html.DisplayNameFor(model => model.Authors[i].Biography)
-			</dt>
-			<dd class="col-sm-10">
-				@if (item.Biography != null && item.Biography != "")
-				{
-					@Html.DisplayFor(model => model.Authors[i].Biography)
-				}
-				else
-				{
-					@:This user does not exist in our database, we cannot provide any further details about them.
+							}
+						</p>
 
-				}
-			</dd>
-			<dt class="col-sm-2">
-				@Html.DisplayNameFor(model => model.Authors[i].PhoneNumber)
-			</dt>
-			<dd class="col-sm-10">
-				@if (item.PhoneNumber != null && item.Biography != "")
-				{
-					@Html.DisplayFor(model => model.Authors[i].PhoneNumber)
-				}
-				else
-				{
-					@:N/A
+					</div>
+                    <hr />
+                    <div>
+                        <h4>Information about authors</h4>
+                        @for (int i = 0; i < Model.Authors.Count; i++)
+                        {
+                            var item = Model.Authors[i];
+                            if (i % 3 == 0)
+                            {
+                                @:<div class="row">
+                                }
 
-				}
-			</dd>
+                                <div class="col-md-4">
+                                    <div class="card" style="width:18rem; height:20rem;">
 
-		}
-		<dt class="col-sm-2 mt-3">
-			@Html.DisplayNameFor(model => model.Paper.PaperDocument.DocumentName)
-		</dt>
-		<dd class="col-sm-10 mt-3">
-			<a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-documentId="@Model.DocumentId">
-				<i class="fas fa-file-pdf" style="color: red"></i>
-				@Html.DisplayFor(model => model.Paper.PaperDocument.DocumentName)
-			</a>
+                                        <div class="card-body">
+                                            <dt>
+                                                <span><i class="fa fa-envelope-o"></i> Email</span>
+                                            </dt>
+                                            <dd>
+                                                <a href="mailto:@Model.Authors[i].Email">@Html.DisplayFor(model => model.Authors[i].Email)</a>
+                                            </dd>
+                                            <dt>
+                                                <span><i class="fa fa-tablet"></i> Phone</span>
+                                                <dd>
+                                                    @if (item.PhoneNumber != null && item.Biography != "")
+                                                    {
+                                                        <a href="callto:@Model.Authors[i].PhoneNumber">@Html.DisplayFor(model => model.Authors[i].PhoneNumber)</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        @:N/A
+                                                    }
+                                                </dd>
+                                            <dt>
+                                                @Html.DisplayNameFor(model => model.Authors[i].Biography)
+                                            </dt>
+                                            <dd>
+                                                @if (item.Biography != null && item.Biography != "")
+                                                {
+                                                    @Html.DisplayFor(model => model.Authors[i].Biography)
+                                                }
+                                                else
+                                                {
+                                                    @:This user does not exist in our database, we cannot provide any further details about them.
+                                                }
+                                            </dd>
+                                        </div>
 
-		</dd>
-	</dl>
+                                    </div>
+                                </div>
+
+                                if (i % 3 == 2)
+                                {
+                                @:</div>
+                            }
+                        }
+                    </div>
+                    <hr />
+                    <div>
+                         <a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-documentId="@Model.DocumentId">
+                         <button type="button" class="btn btn-light"><i><img src="https://img.icons8.com/ios/50/000000/export-pdf-2.png" /></i> Download</button>
+                         </a>
+                         <a asp-action="@Model.PreviousAction" asp-controller="Paper">
+                             <button type="button" class="btn bg-light">Back to List</button>
+                         </a>
+                    </div>
+
+                </div>
+            </div>
+    </section>
 </div>
-<div>
-	@if (!Model.NoEdit)
-	{
-		<a asp-action="Edit" asp-route-id="@Model.Paper.Id">Edit</a>
-	}
-		<a asp-action="@Model.PreviousAction" asp-controller="Paper" class="btn btn-secondary btn-sm">Back to List</a>
-	
 
-</div>
+
+
+
+

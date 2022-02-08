@@ -1,32 +1,83 @@
-﻿@model List<ScientificJournal.Domain.DomainModels.Paper>
+﻿@model ScientificJournal.Domain.DTO.PapersConferencesDTO
 @{
-	ViewData["Title"] = "Create";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div>All published papers</div>
-<div class="container">
-	<table class="table table-hover">
-		<thead> 
-			<tr>
-				<th scope="col">#</th>
-				<th scope="col">Paper Title</th>
-				<th scope="col">Area of Research</th>
-				<th scope="col"></th>
-			</tr>
-		</thead>
-		<tbody>
-			@for (int i = 0; i < Model.Count; i++)
+<body>
+	<h3 class="h3">All research papers</h3>
+	<div class="container">
+
+		@for (int i = 0; i < Model.Papers.Count; i++)
+		{
+			var item = Model.Papers[i];
+			if (i % 3 == 0)
 			{
-				var item = Model[i];
-				<tr>
-					<td>@(i+1)</td>
-					<td>@item.Title</td>
-					<td>@item.AreaOfResearch</td>
-					<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-flag="1" asp-route-prev="Index" class="btn btn-info">Details</a></td>
 
-				</tr>
+				@:<div class="row">
+				}
+
+				<div class="col-md-12 m-4">
+					<div class="card" style="width:50rem; height:18rem">
+
+						<div class="card-body">
+							<h5 class="card-title">@item.Title</h5>
+							<p class="card-text">Area of Research: @item.AreaOfResearch</p>
+							<p class="card-text">@item.Abstract</p>
+						</div>
+						<div class="card-footer">
+							<a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-flag="1" asp-route-prev="Index" class="btn btn-info">More details</a>
+						</div>
+
+					</div>
+				</div>
+
+				if (i % 3 == 2)
+				{
+				@:</div>
 			}
-		</tbody>
-	</table>
-</div>
 
+		}
+	</div>
+
+	<h3 class="h3">All conferences</h3>
+	<div class="container">
+
+
+		@for (int i = 0; i < Model.Conferences.Count; i++)
+		{
+			var item = Model.Conferences[i];
+
+			if (i % 3 == 0)
+			{
+				@:<div class="row">
+				}
+
+
+				<div class="col-md-3 m-4">
+					<div class="card" style="width: 18rem; height: 30rem;">
+						<img class="card-img-top" src="@item.ConferenceImage" style="height: 50%" alt="Image for product!" />
+
+						<div class="card-body">
+							<h3 class="card-title">@item.ConferenceName</h3>
+							<p class="card-text">@item.Date</p>
+
+							<h6>Price: @item.Price</h6>
+						</div>
+
+						<div class="card-footer">
+
+							<a asp-controller="Conference" asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary">Details</a>
+
+						</div>
+					</div>
+				</div>
+
+
+
+				if (i % 3 == 2)
+				{
+				@:</div>
+			}
+		}
+	</div>
+</body>
