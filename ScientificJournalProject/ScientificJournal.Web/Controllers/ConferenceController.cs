@@ -75,22 +75,24 @@ namespace ScientificJournal.Web.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Details(Guid? id)
+        public IActionResult Details(Guid id)
         {
-            if (id == null)
+            if (id==null)
             {
                 return NotFound();
             }
 
-            var conference = conferenceService.GetDetailsForConference(id);
-           
+            var tmp = conferenceService.GetDetailsForConference(id);
+           var conference = conferenceService.GetDetailsForConferenceByName(tmp.ConferenceName);
+
             if (conference == null)
             {
                 return NotFound();
             }
-            
+
 
             return View(conference);
+          
         }
 
     }

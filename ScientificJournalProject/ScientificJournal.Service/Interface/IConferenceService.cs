@@ -10,5 +10,6 @@ namespace ScientificJournal.Service.Interface
         void AddConference(Conference conference);
         List<Conference> GetConferences();
         Conference GetDetailsForConference(Guid? id);
+        Conference GetDetailsForConferenceByName(string name);
     }
 }

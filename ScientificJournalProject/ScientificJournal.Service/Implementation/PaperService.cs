@@ -34,7 +34,7 @@ namespace ScientificJournal.Service.Implementation
         public void CreateNewPaper(PaperDTO p,IFormFile file)
         {
        
-            PaperDocument paperDocumentToAdd = new PaperDocument
+                PaperDocument paperDocumentToAdd = new PaperDocument
             {
                 Id = Guid.NewGuid(),
                 
@@ -52,17 +52,15 @@ namespace ScientificJournal.Service.Implementation
 
                 fileStream.Flush();
             }
-            //treba da ja definirame konkretnata konferencija!
-            Conference toFind = conferenceRepository.GetConferenceById(p.ConferenceId);
-            if (toFind == null)
+           
+
+            Conference conferenceFromView = conferenceRepository.GetConferenceById(p.ConferenceId);
+            Conference conferenceForPaper = new Conference
             {
-                toFind = new Conference
-                {
-                    ConferenceName = p.ConferenceName
-                };
-                conferenceRepository.Insert(toFind);
-            }
-    
+                ConferenceName = conferenceFromView.ConferenceName
+            };
+            conferenceRepository.Insert(conferenceForPaper);
+
             Paper paperToAdd = new Paper
             {
                 Id = Guid.NewGuid(),
@@ -72,13 +70,13 @@ namespace ScientificJournal.Service.Implementation
                 PaperDocumentId=paperDocumentToAdd.Id,
                 PaperDocument=paperDocumentToAdd,
                 status=Status.PENDING,
-                Conference=toFind,
-                ConferenceId=toFind.Id
-                
-              
+                Conference = conferenceForPaper,
+                ConferenceId = conferenceForPaper.Id
+
+
             };
             
-            List<PapersKeywords> tryList = new List<PapersKeywords>();
+            List<PapersKeywords> keywordsForPaper = new List<PapersKeywords>();
             List<string> keywords = p.Keywords.Trim(',').Split(" ").ToList();
             foreach(string s in keywords)
             {
@@ -87,14 +85,14 @@ namespace ScientificJournal.Service.Implementation
                     PaperId = paperToAdd.Id,
                     Keyword = s
                 };
-                tryList.Add(papersKeywordsToAdd);
+                keywordsForPaper.Add(papersKeywordsToAdd);
         
             }
-            paperToAdd.Keywords = tryList;
-            
+            paperToAdd.Keywords = keywordsForPaper;
 
-            List<string> authors = new List<string>();
             List<PapersUsers> papersUsersList = new List<PapersUsers>();
+            List<string> authors = new List<string>();
+      
             authors.Add(p.AuthorFirst);
             authors.Add(p.AuthorSecond);
             authors.Add(p.AuthorThird);
@@ -152,12 +150,15 @@ namespace ScientificJournal.Service.Implementation
                 stringBuilder.Append(k + " ");
 
             }
-            String keywordsToSend = stringBuilder.ToString(); //kako lista podobro????
+            
+            String keywordsToSend = stringBuilder.ToString();
+            keywordsToSend = keywordsToSend.TrimStart().TrimEnd();
+          
             return keywordsToSend;
         }
         public PaperDetailsDTO GetDetailsForPaper(Guid? id)
         {
-            Paper paperToFind = paperRepository.Get(id);
+            Paper paperToFind = paperRepository.Get(id); 
             
             List<string> keywordsList = paperToFind.Keywords.Select(pk => pk.Keyword).ToList();
             
@@ -165,7 +166,7 @@ namespace ScientificJournal.Service.Implementation
             PaperDetailsDTO model = new PaperDetailsDTO
             {
                 Paper = paperToFind,
-                Keywords = keywordsList, //prethodno beshe keywordsToSend
+                Keywords = keywordsList, 
                 Authors = authorsList,
                 DocumentId=paperToFind.PaperDocumentId,
                 ConferenceName=paperToFind.Conference.ConferenceName
@@ -173,48 +174,25 @@ namespace ScientificJournal.Service.Implementation
 
             return model;
         }
-        public PaperDTO GetDetailsForEdit(Guid? id)
+        public PaperDTO GetDetailsForEdit(Guid? id, ScienceUser currentUser)
         {
             PaperDetailsDTO tmp = this.GetDetailsForPaper(id);
             String keywordsAsString = this.GetKeywordsAsString(tmp.Keywords);
-            if(tmp.Authors.Count == 3)
-            {
-                return new PaperDTO
-                {
-                    Paper = tmp.Paper,
-                    Keywords = keywordsAsString,
-                    AuthorFirst = tmp.Authors.ElementAt(0).Email,
-                    AuthorSecond = tmp.Authors.ElementAt(1).Email,
-                    AuthorThird = tmp.Authors.ElementAt(2).Email,
-                    ConferenceName=tmp.ConferenceName,
-                    ConferenceId=tmp.Paper.ConferenceId,
-                    Conferences=conferenceRepository.GetAllConferences()
-                };
-            }else if (tmp.Authors.Count == 2)
-            {
-                return new PaperDTO
-                {
-                    Paper = tmp.Paper,
-                    Keywords = keywordsAsString,
-                    AuthorFirst = tmp.Authors.ElementAt(0).Email,
-                    AuthorSecond = tmp.Authors.ElementAt(1).Email,
-                    AuthorThird = "",
-                    ConferenceName=tmp.ConferenceName,
-                    ConferenceId = tmp.Paper.ConferenceId,
-                    Conferences = conferenceRepository.GetAllConferences()
-                };
-            }
-            else return new PaperDTO
+            ScienceUser firstAuthor = tmp.Authors.Where(a => a.Equals(currentUser)).FirstOrDefault();
+            List<ScienceUser> tmpList= tmp.Authors.Where(a => !a.Equals(currentUser)).ToList();
+            PaperDTO dto= new PaperDTO
             {
                 Paper = tmp.Paper,
                 Keywords = keywordsAsString,
-                AuthorFirst = tmp.Authors.ElementAt(0).Email,
-                AuthorSecond ="",
-                AuthorThird = "",
+                AuthorFirst = firstAuthor.Email,
+                AuthorSecond = tmpList.ElementAtOrDefault(0) != null ? tmpList.ElementAt(0).Email : "",
+                AuthorThird = tmpList.ElementAtOrDefault(1) != null ? tmpList.ElementAt(1).Email : "",
                 ConferenceName = tmp.ConferenceName,
                 ConferenceId = tmp.Paper.ConferenceId,
                 Conferences = conferenceRepository.GetAllConferences()
             };
+            return dto;
+          
 
         }
 
@@ -225,10 +203,9 @@ namespace ScientificJournal.Service.Implementation
             List<PapersKeywords> paperKeywordsList = new List<PapersKeywords>();
             List<string> keywords = p.Keywords.Trim(',').Split(" ").ToList();
 
-        /*    papersKeywordsRepository.DeleteAllKeywordsForPaper(paperToUpdate.Id); //inaku frla exception*/
             foreach (string s in keywords)
             {
-                PapersKeywords papersKeywordsToAdd = new PapersKeywords //new moze da e problematicno??
+                PapersKeywords papersKeywordsToAdd = new PapersKeywords
                 {
                     PaperId = p.Paper.Id,
                     Keyword = s,
@@ -258,7 +235,7 @@ namespace ScientificJournal.Service.Implementation
                         ScienceUserId = scienceUser.Id
                     };
                     papersUsersList.Add(itemToAdd);
-                    /*papersUsersRepository.Update(itemToAdd);*/
+                  
                    
                 }
             }
@@ -267,16 +244,14 @@ namespace ScientificJournal.Service.Implementation
             paperToUpdate.Abstract = p.Paper.Abstract;
             paperToUpdate.Title = p.Paper.Title;
             paperToUpdate.AreaOfResearch = p.Paper.AreaOfResearch;
-            
-            Conference toFind = conferenceRepository.GetConferenceById(p.ConferenceId);
-            if (toFind == null)
+
+            Conference conferenceFromView = conferenceRepository.GetConferenceById(p.ConferenceId);
+            Conference toFind = new Conference
             {
-                toFind = new Conference
-                {
-                    ConferenceName = p.ConferenceName
-                };
-                conferenceRepository.Insert(toFind);
-            }
+                ConferenceName = conferenceFromView.ConferenceName
+            };
+            conferenceRepository.Insert(toFind);
+
             paperToUpdate.Conference = toFind;
             paperToUpdate.ConferenceId = toFind.Id;
 

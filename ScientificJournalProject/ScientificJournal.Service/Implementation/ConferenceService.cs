@@ -34,5 +34,10 @@ namespace ScientificJournal.Service.Implementation
         {
             return conferenceRepository.GetConferenceById(id);
         }
+
+        public Conference GetDetailsForConferenceByName(string name)
+        {
+            return conferenceRepository.GetConferenceByName(name);
+        }
     }
 }

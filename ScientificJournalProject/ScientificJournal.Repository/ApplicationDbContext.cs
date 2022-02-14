@@ -57,13 +57,18 @@ namespace ScientificJournal.Repository
                 .HasOne(p => p.PaperDocument)
                 .WithOne(pd => pd.Paper)
                 .HasForeignKey<Paper>(p => p.PaperDocumentId);
-            
+           
+            builder.Entity<Conference>()
+                .Property(z => z.Id)
+                .ValueGeneratedOnAdd();
+
             //OneToMany Conference:Paper
             builder.Entity<Paper>()
                 .HasOne(p => p.Conference)
                 .WithMany(c => c.Papers)
                 .HasForeignKey(p => p.ConferenceId);
-                
+
+
         }
 
     }

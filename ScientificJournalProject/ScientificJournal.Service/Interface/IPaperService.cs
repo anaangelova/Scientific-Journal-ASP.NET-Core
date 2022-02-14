@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ScientificJournal.Domain.DomainModels;
 using ScientificJournal.Domain.DTO;
+using ScientificJournal.Domain.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +16,7 @@ namespace ScientificJournal.Service.Interface
         void UpdateExistingPaper(PaperDTO p);
         void DeletePaper(Guid id);
         List<Paper> GetPapersForUser(string userId);
-        PaperDTO GetDetailsForEdit(Guid? id);
+        PaperDTO GetDetailsForEdit(Guid? id, ScienceUser currentUser);
 
         List<Paper> GetAllPendingPapers();
         void ApprovePaper(Guid? id);

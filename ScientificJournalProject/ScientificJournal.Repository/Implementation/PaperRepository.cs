@@ -57,8 +57,9 @@ namespace ScientificJournal.Repository.Implementation
             {
                 throw new ArgumentNullException("entity");
             }
+         
             dbSet.Add(entity);
-            context.SaveChanges();
+            int result = context.SaveChanges();
         }
 
         public void Update(Paper entity)
@@ -67,11 +68,11 @@ namespace ScientificJournal.Repository.Implementation
             {
                 throw new ArgumentNullException("entity");
             }
-            
+
             dbSet.Update(entity);
             context.SaveChanges();
 
-            
+
         }
 
         public List<Paper> AllPapersForUser(string userId)
@@ -100,7 +101,7 @@ namespace ScientificJournal.Repository.Implementation
 
         public List<Paper> GetPapersForConference(Guid? conferenceId)
         {
-            return dbSet.Where(p => p.ConferenceId.Equals(conferenceId) && p.status.Equals(Status.APPROVED)).ToList();
+            return dbSet.Where(p => p.Conference.Id.Equals(conferenceId) && p.status.Equals(Status.APPROVED)).ToList();
         }
     }
 }

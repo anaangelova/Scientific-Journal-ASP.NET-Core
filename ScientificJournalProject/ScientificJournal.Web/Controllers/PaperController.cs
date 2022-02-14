@@ -122,8 +122,14 @@ namespace ScientificJournal.Web.Controllers
 
         public IActionResult Edit(Guid? id)
         {
-            PaperDTO tmp= paperService.GetDetailsForEdit(id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ScienceUser currentUser = userManager.FindByIdAsync(userId.ToString()).Result;
+
+            PaperDTO tmp= paperService.GetDetailsForEdit(id,currentUser);
             string authors = tmp.AuthorFirst + " " + tmp.AuthorSecond + " " + tmp.AuthorThird;
+
+
             if (!isAuthor(authors))
             {
                 return StatusCode(403);
@@ -133,7 +139,7 @@ namespace ScientificJournal.Web.Controllers
                 return NotFound();
             }
 
-            var paper = paperService.GetDetailsForEdit(id);
+            var paper = paperService.GetDetailsForEdit(id, currentUser);
             if (paper == null)
             {
                 return NotFound();
