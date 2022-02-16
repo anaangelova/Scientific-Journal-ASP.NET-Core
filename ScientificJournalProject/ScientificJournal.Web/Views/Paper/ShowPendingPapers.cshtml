@@ -3,36 +3,53 @@
 	ViewData["Title"] = "Create";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div>All pending papers</div>
-<div class="container">
-	<table class="table table-hover">
-		<thead class="thead-dark">
-			<tr>
-				<th scope="col">#</th>
-				<th scope="col">Paper Title</th>
-				<th scope="col">Area of Research</th>
-				<th scope="col"></th>
-				<th scope="col"></th>
-				<th scope="col"></th>
-			</tr>
-		</thead>
-		<tbody>
-			@for (int i = 0; i < Model.Count; i++)
-			{
-				var item = Model[i];
+<br />
+<div class="card">
+	<h4 style="margin-top: 20px; margin-left: 20px">All pending papers</h4>
+	<br />
+	<div class="container">
+		<table class="table table-hover table-striped">
+			<thead>
 				<tr>
-					<td>@(i+1)</td>
-					<td>@item.Title</td>
-					<td>@item.AreaOfResearch</td>
-					<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-flag="1" asp-route-prev="ShowPendingPapers" class="btn btn-info">Details</a></td>
-					<td><a asp-action="ApprovePaper" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-success">Approve</a></td>
-					<td><a asp-action="DenyPaper" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-danger">Deny</a></td>
-
+					<th scope="col">#</th>
+					<th scope="col">Paper Title</th>
+					<th scope="col">Area of Research</th>
+					<th scope="col"></th>
+					<th scope="col"></th>
+					<th scope="col"></th>
 				</tr>
-			}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				@for (int i = 0; i < Model.Count; i++)
+				{
+					var item = Model[i];
+					<tr>
+						<td>@(i+1)</td>
+						<td>@item.Title</td>
+						<td>@item.AreaOfResearch</td>
+						<td><a asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id" asp-route-flag="1" asp-route-prev="ShowPendingPapers" class="btn btn-info">Details</a></td>
+						<td><a asp-action="ApprovePaper" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-success">Approve</a></td>
+						<td><a asp-action="DenyPaper" asp-controller="Paper" asp-route-id="@item.Id" class="btn btn-danger">Deny</a></td>
 
-	<a class="btn btn-success" asp-controller="Conference" asp-action="ShowAllConferences">All conferences</a>
-	
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+<br />
+<br />
+
+<div class="card" style="width: 35rem; height: 12rem; background-color: #e7eaed ">
+	<div class="col-md-12">
+		<h4 style="margin: 20px">Conferences</h4>
+		<div class="row">
+			<div class="col-md-6">
+				<a class="btn btn-light card-title" asp-controller="Conference" asp-action="ShowAllConferences" style="width: 220px; height: 70px; margin-left: 15px; padding-top: 12px"><i><img src="https://img.icons8.com/external-kiranshastry-solid-kiranshastry/42/000000/external-conference-communication-kiranshastry-solid-kiranshastry-2.png" /></i> View all Conferences</a>
+			</div>
+			<div class="col-md-6">
+				<a class="btn btn-light card-title" asp-controller="Conference" asp-action="AddConference" style="width: 220px; height: 70px; padding-top: 12px"><i><img src="https://img.icons8.com/dotty/40/000000/add-property.png" /></i> Add new Conference</a>
+			</div>
+		</div>
+	</div>
 </div>

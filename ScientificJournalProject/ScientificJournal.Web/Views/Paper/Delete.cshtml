@@ -5,42 +5,47 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Delete paper</h1>
+<h1>Delete research paper</h1>
 
 <h3>Are you sure you want to delete this?</h3>
+<br />
 <div>
-	<h4>Product</h4>
 	<hr />
 	<dl class="row">
 		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Paper.Title)
+			@Html.DisplayNameFor(model => model.Paper.Title):
 		</dt>
 		<dd class="col-sm-10">
 			@Html.DisplayFor(model => model.Paper.Title)
 		</dd>
 		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Paper.AreaOfResearch)
+			Area Of Research:
 		</dt>
 		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Paper.AreaOfResearch)
+			<span class="text-black">@Html.DisplayFor(model => model.Paper.AreaOfResearch)</span>
+		</dd>
+		<dt class="col-sm-2">
+			Conference:
+		</dt>
+		<dd class="col-sm-10">
+			<a class="text-black font-italic">@Html.DisplayFor(model => model.ConferenceName)</a>
 		</dd>
 		<dt class="col-sm-2">
 			@Html.DisplayNameFor(model => model.Keywords)
 		</dt>
-
 		<dd class="col-sm-10">
 			@for (int i = 0; i < Model.Keywords.Count; i++)
 			{
 				<span class="rounded-pill mx-lg-1 mx-md-0 p-lg-2 p-md-1" style="background-color:lightgreen">@Model.Keywords[i]  </span>
 			}
 		</dd>
-
 	</dl>
+	<br />
 
-	
+
 	<form asp-action="Delete" method="post">
 		<input type="hidden" asp-for="Paper.Id" />
-		<input type="submit" value="Delete" class="btn btn-danger" /> |
-		<a asp-action="MyPapers" asp-controller="Paper" class="btn btn-secondary btn-sm">Back to List</a>
+		<input style="margin-left: 20px" type="submit" value="Delete" class="btn btn-danger" />
+		<a style="margin-left: 20px" asp-action="MyPapers" asp-controller="Paper" class="btn btn-secondary ">Back to List</a>
 	</form>
 </div>

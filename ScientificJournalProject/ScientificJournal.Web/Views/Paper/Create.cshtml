@@ -1,17 +1,17 @@
 ﻿@model ScientificJournal.Domain.DTO.PaperDTO
 @{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Create";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h4>Please enter details for your research paper</h4>
-            <hr/>
-            <br />
-            <form asp-action="Create" method="post" enctype="multipart/form-data">
-                <div class="form-row">
+	<div class="row">
+		<div class="col-md-12">
+			<h4>Please enter details for your research paper</h4>
+			<hr />
+			<br />
+			<form asp-action="Create" method="post" enctype="multipart/form-data">
+				<div class="form-row">
 					<div class="col-sm-5">
 						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 						<div class="form-group">
@@ -24,6 +24,7 @@
 							<input asp-for="Paper.AreaOfResearch" class="form-control" />
 							<span asp-validation-for="Paper.AreaOfResearch" class="text-danger"></span>
 						</div>
+
 						<div class="form-group">
 							<label asp-for="ConferenceId" class="control-label">Conference Name</label>
 							<select asp-for="ConferenceId">
@@ -37,51 +38,51 @@
 						</div>
 						<div class="form-group">
 							<label asp-for="Paper.Abstract" class="control-label"></label>
-							<textarea rows="6" asp-for="Paper.Abstract" class="form-control" style="height: 80px"></textarea>
+							<textarea rows="6" asp-for="Paper.Abstract" class="form-control" style="height: 250px"></textarea>
 							<span asp-validation-for="Paper.Abstract" class="text-danger"></span>
 						</div>
+					</div>
+					<div class="col-sm-5" style="margin-left: 50px;">
 						<div class="form-group">
 							<label asp-for="Keywords" class="control-label"></label>
 							<input asp-for="Keywords" class="form-control" style="height: 50px" />
 							<span asp-validation-for="Keywords" class="text-danger"></span>
 						</div>
+						<div class="form-group">
+							<label asp-for="AuthorFirst" class="control-label">First Author</label>
+							<input asp-for="AuthorFirst" class="form-control" readonly />
+							<span asp-validation-for="AuthorFirst" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="AuthorSecond" class="control-label">Second Author</label>
+							<input asp-for="AuthorSecond" class="form-control" />
+							<span asp-validation-for="AuthorSecond" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="AuthorThird" class="control-label">Third Author</label>
+							<input asp-for="AuthorThird" class="form-control" />
+							<span asp-validation-for="AuthorThird" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Upload your paper</label>
+							<input type="file" name="file" class="form-control" style="height: 50px;" />
+						</div>
+						<div>
+							<div class="form-group">
+								<input type="submit" value="Create" class="btn btn-primary" />
+								<a asp-action="MyPapers" asp-controller="Paper" class="btn btn-secondary" style="margin-left: 10px">Back to List</a>
+							</div>
+						</div>
 					</div>
-                    <div class="col-sm-5" style="margin-left: 50px;">
-                        <div class="form-group">
-                            <label asp-for="AuthorFirst" class="control-label">First Author</label>
-                            <input asp-for="AuthorFirst" class="form-control" readonly />
-                            <span asp-validation-for="AuthorFirst" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="AuthorSecond" class="control-label">Second Author</label>
-                            <input asp-for="AuthorSecond" class="form-control" />
-                            <span asp-validation-for="AuthorSecond" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="AuthorThird" class="control-label">Third Author</label>
-                            <input asp-for="AuthorThird" class="form-control" />
-                            <span asp-validation-for="AuthorThird" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Upload your paper</label>
-                            <input type="file" name="file" class="form-control" style="height: 50px;" />
-                        </div>
-                        <div>
-                            <div class="form-group">
-                                <input type="submit" value="Create" class="btn btn-primary" />
-                                <a asp-action="MyPapers" asp-controller="Paper" class="btn btn-secondary" style="margin-left: 10px">Back to List</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        </div>
-    </div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
 

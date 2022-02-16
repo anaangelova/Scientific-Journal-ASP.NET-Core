@@ -54,6 +54,8 @@ namespace ScientificJournal.Web
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,9 +84,10 @@ namespace ScientificJournal.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Paper}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+          
         }
     }
 }

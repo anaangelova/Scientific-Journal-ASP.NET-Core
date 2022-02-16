@@ -227,13 +227,32 @@ namespace ScientificJournal.Service.Implementation
                 if (s != null && s!="")
                 {
                     ScienceUser scienceUser = userRepository.GetByEmail(s);
-                    PapersUsers itemToAdd = new PapersUsers
+                   
+                    PapersUsers itemToAdd;
+                    if (scienceUser == null) //ne postoi korisnikot vo bazata
                     {
-                        PaperId =p.Paper.Id,
-                        Paper=p.Paper,
-                        ScienceUser=scienceUser,
-                        ScienceUserId = scienceUser.Id
-                    };
+                        scienceUser = new ScienceUser
+                        {
+                            Email = s,
+                        };
+                        userRepository.Insert(scienceUser);
+                        itemToAdd = new PapersUsers
+                        {
+                            PaperId = paperToUpdate.Id,
+                            ScienceUserId = scienceUser.Id
+                        };
+                    }
+                    else
+                    {
+                        itemToAdd = new PapersUsers
+                        {
+                            PaperId = paperToUpdate.Id,
+                            ScienceUserId = scienceUser.Id
+                        };
+
+                    }
+
+                   
                     papersUsersList.Add(itemToAdd);
                   
                    

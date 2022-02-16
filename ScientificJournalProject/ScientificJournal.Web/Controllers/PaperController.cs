@@ -38,6 +38,13 @@ namespace ScientificJournal.Web.Controllers
         {
             //gi lista site approved papers + site konferencii da se prikazhat
             List<Paper> allPapers = paperService.GetAllPapers();
+            foreach (Paper p in allPapers)
+            {
+                if (p.Abstract.Length > 670)
+                {
+                    p.Abstract = p.Abstract.Substring(0, 670) + "...";
+                }
+            }
             List<Conference> allConferences = conferenceService.GetConferences();
             PapersConferencesDTO dto = new PapersConferencesDTO
             {

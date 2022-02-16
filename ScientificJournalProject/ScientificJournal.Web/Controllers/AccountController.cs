@@ -109,7 +109,7 @@ namespace ScientificJournal.Web.Controllers
                 if (result.Succeeded)
                 {
                     await userManager.AddClaimAsync(user, new Claim("UserRole", "Admin"));
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Paper");
                 }
                 else if (result.IsLockedOut)
                 {

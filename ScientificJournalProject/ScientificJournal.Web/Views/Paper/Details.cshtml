@@ -1,120 +1,120 @@
 ﻿@model ScientificJournal.Domain.DTO.PaperDetailsDTO
 @{
-    ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<head>
+	<script src="https://kit.fontawesome.com/799254cd45.js" crossorigin="anonymous"></script>
+</head>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
-    <section class="member-details">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-10 col-md-10">
-                    <div class="member_designation">
-                        <br />
-                        <h2 class="text-justify">@Html.DisplayFor(model => model.Paper.Title)</h2>
-                    </div>
-                    <div class="member_desc">
-                        <h4>@Html.DisplayNameFor(model => model.Paper.Abstract)</h4>
-                        <p>@Html.DisplayFor(model => model.Paper.Abstract)</p>
-                    </div>
-                    <hr />
-                    <div>
-                        <h4>Area Of Research</h4>
-                        <p class="text-black font-italic">@Html.DisplayFor(model => model.Paper.AreaOfResearch)</p>
-                    </div>
-                    <hr />
-                    <div>
-                        <h4>Conference</h4>
-                        <a asp-controller="Conference" asp-action="Details" asp-route-id="@Model.Paper.Conference.Id"  class="text-black font-italic">@Html.DisplayFor(model => model.ConferenceName)</a>
-                    </div>
-                    <hr />
+	<section class="member-details">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 col-md-10">
+					<div class="member_designation">
+						<br />
+						<h1 class="h1" style="text-align: start;">@Html.DisplayFor(model => model.Paper.Title)</h1>
+						<span class="text-black font-italic h3" style="color: indigo;">Area Of Research: @Html.DisplayFor(model => model.Paper.AreaOfResearch)</span>
+					</div>
+					<br />
+					<div class="member_desc">
+						<h3 class="font-weight-bold" style="color: #424242; ">@Html.DisplayNameFor(model => model.Paper.Abstract)</h3>
+						<p class="h4 font-weight-light" style="text-align: justify;">@Html.DisplayFor(model => model.Paper.Abstract)</p>
+					</div>
+					<hr />
 					<div>
-						<h4>@Html.DisplayNameFor(model => model.Keywords)</h4>
+						<h3 class="font-weight-bold" style="color: #424242; ">Published At</h3>
+						<a asp-controller="Conference" asp-action="Details" asp-route-id="@Model.Paper.ConferenceId" class="text-black font-italic h4">@Html.DisplayFor(model => model.ConferenceName)</a>
+					</div>
+					<hr />
+					<div>
+						<h3 class="font-weight-bold" style="margin-bottom: 20px; color: #424242;">@Html.DisplayNameFor(model => model.Keywords)</h3>
 						<p>
-							<i class="fa fa-chevron-circle-right " aria-hidden="true"></i>
+							<i class="fa fa-chevron-circle-right " aria-hidden="true" style=""></i>
 							@for (int i = 0; i < Model.Keywords.Count; i++)
 							{
 								var item = Model.Keywords[i];
-								if (item != " " && item!="" && item!="  ")
+								if (item != " " && item != "" && item != "  ")
 								{
-									<span class="rounded-pill mx-lg-1 mx-md-0 p-lg-2 p-md-1" style="background-color:lightgreen">@Model.Keywords[i]  </span>
+									<span class="rounded-pill mx-lg-1 mx-md-0 p-lg-2 p-md-1 px-5 " style="background-color: #6FD467; display: inline-block; margin-bottom: 5px; font-size: 1.3rem; ">@Model.Keywords[i] </span>
 								}
-
-
 							}
 						</p>
+					</div>
+					<hr />
+					<div>
+						<h3 class="font-weight-bold" style="color: #424242; ">Information about authors</h3>
+						@for (int i = 0; i < Model.Authors.Count; i++)
+						{
+							var item = Model.Authors[i];
+							if (i % 3 == 0)
+							{
+								@:<div class="row">
+								}
+
+								<div class="col-md-4">
+									<div class="card" style="width:18rem; height:20rem;">
+
+										<div class="card-body">
+											<dt>
+												<span><i class="fa fa-envelope-o"></i> Email</span>
+											</dt>
+											<dd>
+												<a href="mailto:@Model.Authors[i].Email">@Html.DisplayFor(model => model.Authors[i].Email)</a>
+											</dd>
+											<dt>
+												<span><i class="fa fa-tablet"></i> Phone</span>
+												<dd>
+													@if (item.PhoneNumber != null && item.Biography != "")
+													{
+														<a href="callto:@Model.Authors[i].PhoneNumber">@Html.DisplayFor(model => model.Authors[i].PhoneNumber)</a>
+													}
+													else
+													{
+														@:N/A
+													}
+												</dd>
+											<dt>
+												@Html.DisplayNameFor(model => model.Authors[i].Biography)
+											</dt>
+											<dd>
+												@if (item.Biography != null && item.Biography != "")
+												{
+													@Html.DisplayFor(model => model.Authors[i].Biography)
+												}
+												else
+												{
+													@:This user does not exist in our database, we cannot provide any further details about them.
+												}
+											</dd>
+										</div>
+
+									</div>
+								</div>
+
+								if (i % 3 == 2)
+								{
+								@:</div>
+							}
+						}
+					</div>
+					<hr />
+					<div>
+						<a asp-action="@Model.PreviousAction" asp-controller="Paper" class="btn btn-outline-dark mr-3">
+							<i class="fa-solid fa-caret-left"></i>
+							Back to List
+						</a>
+						<a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-documentId="@Model.DocumentId" class="btn btn-outline-dark" style="color: red;">
+							<i class="fa-solid fa-download"></i>
+							Download Document
+
+						</a>
 
 					</div>
-                    <hr />
-                    <div>
-                        <h4>Information about authors</h4>
-                        @for (int i = 0; i < Model.Authors.Count; i++)
-                        {
-                            var item = Model.Authors[i];
-                            if (i % 3 == 0)
-                            {
-                                @:<div class="row">
-                                }
-
-                                <div class="col-md-4">
-                                    <div class="card" style="width:18rem; height:20rem;">
-
-                                        <div class="card-body">
-                                            <dt>
-                                                <span><i class="fa fa-envelope-o"></i> Email</span>
-                                            </dt>
-                                            <dd>
-                                                <a href="mailto:@Model.Authors[i].Email">@Html.DisplayFor(model => model.Authors[i].Email)</a>
-                                            </dd>
-                                            <dt>
-                                                <span><i class="fa fa-tablet"></i> Phone</span>
-                                                <dd>
-                                                    @if (item.PhoneNumber != null && item.Biography != "")
-                                                    {
-                                                        <a href="callto:@Model.Authors[i].PhoneNumber">@Html.DisplayFor(model => model.Authors[i].PhoneNumber)</a>
-                                                    }
-                                                    else
-                                                    {
-                                                        @:N/A
-                                                    }
-                                                </dd>
-                                            <dt>
-                                                @Html.DisplayNameFor(model => model.Authors[i].Biography)
-                                            </dt>
-                                            <dd>
-                                                @if (item.Biography != null && item.Biography != "")
-                                                {
-                                                    @Html.DisplayFor(model => model.Authors[i].Biography)
-                                                }
-                                                else
-                                                {
-                                                    @:This user does not exist in our database, we cannot provide any further details about them.
-                                                }
-                                            </dd>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                if (i % 3 == 2)
-                                {
-                                @:</div>
-                            }
-                        }
-                    </div>
-                    <hr />
-                    <div>
-                         <a asp-action="GetPdfDocument" asp-controller="Paper" asp-route-documentId="@Model.DocumentId">
-                         <button type="button" class="btn btn-light"><i><img src="https://img.icons8.com/ios/50/000000/export-pdf-2.png" /></i> Download</button>
-                         </a>
-                         <a asp-action="@Model.PreviousAction" asp-controller="Paper">
-                             <button type="button" class="btn bg-light">Back to List</button>
-                         </a>
-                    </div>
-
-                </div>
-            </div>
-    </section>
+				</div>
+			</div>
+	</section>
 </div>
 
 

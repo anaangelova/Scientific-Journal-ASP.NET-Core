@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ScientificJournal.Domain.DomainModels
@@ -14,8 +15,12 @@ namespace ScientificJournal.Domain.DomainModels
     public class Paper
     {
         public Guid Id { get; set; }
+
         public string Title { get; set; }
         public string AreaOfResearch { get; set; }
+
+        [Required(ErrorMessage = "Abstract is required")]
+        [MinLength(15)]
         public string Abstract { get; set; }
         public virtual ICollection<PapersUsers> AuthorsForPaper { get; set; }
         public virtual ICollection<PapersKeywords> Keywords { get; set; }

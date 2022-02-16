@@ -5,41 +5,37 @@
 }
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
-	<section class="member-details">
-		<div class="container">
+	<div class="row">
+		<div class="col-md-12">
 			<div class="row">
-				<div class="col-lg-10 col-md-10">
-					
-					<div class="member_designation">
-						<br />
-						<h2 class="text-justify">@Html.DisplayFor(model => model.ConferenceName)</h2>
-					</div>
-					<div class="member_desc">
-						<h4>@Html.DisplayNameFor(model => model.Date)</h4>
-						<p>@Html.DisplayFor(model => model.Date)</p>
-					</div>
-					<hr />
-					<div>
-						<h4>Price</h4>
-						<p class="text-black font-italic">@Html.DisplayFor(model => model.Price)</p>
-					</div>
-					<hr />
 
+				<div class="col-md-7">
+					<h3>@Html.DisplayFor(model => model.ConferenceName)</h3>
+					<hr />
+					<h6>@Html.DisplayNameFor(model => model.Date):</h6>
+					<p>@Model.Date.ToString("g", System.Globalization.CultureInfo.CreateSpecificCulture("en-US"))  </p>
+					<hr />
+					<h6>Price:</h6>
+					<p class="text-black font-italic">@Html.DisplayFor(model => model.Price) $</p>
+					<hr />
 					<div>
 						<h4>Papers published on conference</h4>
 						@for (int i = 0; i < Model.Papers.Count; i++)
 						{
 							var allPapers = Model.Papers.ToList();
 							var item = allPapers[i];
-							<a class="btn-link" asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id">@item.Title</a>
-								
-						
+							<span>
+								@(i+1)) <a class="btn-link" asp-action="Details" asp-controller="Paper" asp-route-id="@item.Id">@item.Title</a>
+							</span>
+							<br />
 						}
 					</div>
-					<hr />
-					
-
 				</div>
+				<div class="col-md-5">
+					<img src="@Html.DisplayFor(model => model.ConferenceImage)" alt="Image for Ticket" style="width:400px; height:350px" />
+				</div>
+
 			</div>
-	</section>
+		</div>
+	</div>
 </div>
