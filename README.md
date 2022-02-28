@@ -1,0 +1,5 @@
+# Scientific-Journal-ASP.NET-Core
+This is an <b>ASP .NET Core</b> web application developed by following the architectural pattern - <i>Onion Architecture</i> and using <b>Entity Framework Core</b> for data access and <b>Microsoft SQL Server</b> as DBMS. <br><br>
+The main purpose of the application is publishing research papers and the proccess of approving submitted papers. <br><br>
+There are 2 types of users - regular users and an admin user. Regular users (authors) can easily publish research papers in collaboration with other authors and specify the conference on which the paper is to be or is already presented.<br>
+The admin user is responsible for approving or dismissing the pending research papers. In other words, when a user adds new research paper they submit the research paper and wait for approval. While the paper is pending, it is not shown anywhere except in the user's list of recipes. When the admin approves a research paper, that paper becomes 'public' and is shown on home page and in the associated conference. If the admin dismisses a paper, the author/s can make some changes and submit the paper again for review.
